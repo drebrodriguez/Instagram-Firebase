@@ -9,12 +9,12 @@
 import UIKit
 import Firebase
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
     let addPhotoButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setImage(#imageLiteral(resourceName: "plus_photo"), for: .normal)
-        button.tintColor = UIColor.rgb(149, 204, 244)
+        button.setImage(#imageLiteral(resourceName: "plus_photo").withRenderingMode(.alwaysOriginal), for: .normal)
+        button.addTarget(self, action: #selector(handleAddPhoto), for: .touchUpInside)
         return button
     }()
     
@@ -77,6 +77,30 @@ class ViewController: UIViewController {
         setupInputFields()
   }
     
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        
+        if let editedImage = info["UIImagePickerControllerEditedImage"] as? UIImage {
+            addPhotoButton.setImage(editedImage.withRenderingMode(.alwaysOriginal), for: .normal)
+        } else if let originalImage = info["UIImagePickerControllerOriginalImage"] as? UIImage {
+            addPhotoButton.setImage(originalImage.withRenderingMode(.alwaysOriginal), for: .normal)
+        }
+        
+        addPhotoButton.layer.cornerRadius = addPhotoButton.frame.width/2
+        addPhotoButton.layer.masksToBounds = true
+        addPhotoButton.layer.borderColor = UIColor.rgb(17, 154, 237).cgColor
+        addPhotoButton.layer.borderWidth = 3
+        
+        dismiss(animated: true, completion: nil)
+    }
+    
+    @objc func handleAddPhoto() {
+        let imagePickerController = UIImagePickerController()
+        imagePickerController.delegate = self
+        imagePickerController.allowsEditing = true
+        
+        present(imagePickerController, animated: true, completion: nil)
+    }
+    
     @objc func handleTextInputChange() {
         let isFormValid = emailTextField.text?.count ?? 0 > 0 && usernameTextField.text?.count ?? 0 > 0 && passwordTextField.text?.count ?? 0 > 0
         
@@ -91,8 +115,7 @@ class ViewController: UIViewController {
     
     @objc func showAlert(message: String) {
         let alert = UIAlertController(title: "Sign Up", message: message, preferredStyle: .alert)
-        let action = UIAlertAction(title: "OK", style: .default, handler: { action in self.handleTextInputChange()
-        })
+        let action = UIAlertAction(title: "OK", style: .default, handler: { action in self.handleTextInputChange() })
         
         alert.addAction(action)
         present(alert, animated: true, completion: nil)
@@ -103,15 +126,42 @@ class ViewController: UIViewController {
         guard let username = usernameTextField.text, !username.isEmpty else { return }
         guard let password = passwordTextField.text, !password.isEmpty else { return }
         
-        FIRAuth.auth()?.createUser(withEmail: email, password: password, completion: { (user: FIRUser?, error: Error?) in
+        FIRAuth.auth()?.createUser(withEmail: email, password: password, completion: { (user: FIRUser?, err: Error?) in
             
-            if let err = error {
+            if let error = err {
                 self.showAlert(message: "Failed to create user.")
-                print("Error: ", err)
+                print("Error: ", error)
                 return
             }
             self.showAlert(message: "Successfully created user.")
-            print("Success: ", user?.uid ?? "")
+            print("Successfully created user.")
+            
+            guard let image = self.addPhotoButton.imageView?.image else { return }
+            guard let uploadData = UIImageJPEGRepresentation(image, 0.3) else { return }
+            
+            let filename = NSUUID().uuidString
+            FIRStorage.storage().reference().child("profile_images").child(filename).put(uploadData, metadata: nil, completion: { (metadata, err) in
+                
+                if let error = err {
+                    print("Failed to upload profile image: ", error)
+                    return
+                }
+                guard let profileImageUrl = metadata?.downloadURL()?.absoluteString else { return }
+                print("Successfully uploaded profile image.")
+                
+                guard let uid = user?.uid else { return }
+                
+                let dictionaryValues = ["username":username, "profileImageUrl":profileImageUrl]
+                let values = [uid:dictionaryValues]
+                
+                FIRDatabase.database().reference().child("users").updateChildValues(values, withCompletionBlock: { (err, ref) in
+                    
+                    if let error = err {
+                        print("Failed to save user to DB: ", error)
+                    }
+                    print("Successfully saved user to DB.")
+                })
+            })
             
             self.emailTextField.text = ""
             self.usernameTextField.text = ""
