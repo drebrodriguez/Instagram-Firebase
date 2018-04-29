@@ -7,14 +7,14 @@
 //
 
 import UIKit
+import Firebase
 
 class ViewController: UIViewController {
 
     let addPhotoButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(#imageLiteral(resourceName: "plus_photo"), for: .normal)
-        button.tintColor = UIColor(r: 149, g: 204, b: 244)
-        button.translatesAutoresizingMaskIntoConstraints = false
+        button.tintColor = UIColor.rgb(149, 204, 244)
         return button
     }()
     
@@ -24,7 +24,8 @@ class ViewController: UIViewController {
         tf.backgroundColor = UIColor(white: 0, alpha: 0.03)
         tf.borderStyle = .roundedRect
         tf.font = UIFont.systemFont(ofSize: 14)
-        tf.translatesAutoresizingMaskIntoConstraints = false
+        tf.autocapitalizationType = .none
+        tf.addTarget(self, action: #selector(handleTextInputChange), for: .editingChanged)
         return tf
     }()
     
@@ -34,7 +35,8 @@ class ViewController: UIViewController {
         tf.backgroundColor = UIColor(white: 0, alpha: 0.03)
         tf.borderStyle = .roundedRect
         tf.font = UIFont.systemFont(ofSize: 14)
-        tf.translatesAutoresizingMaskIntoConstraints = false
+        tf.autocapitalizationType = .none
+        tf.addTarget(self, action: #selector(handleTextInputChange), for: .editingChanged)
         return tf
     }()
     
@@ -45,17 +47,20 @@ class ViewController: UIViewController {
         tf.backgroundColor = UIColor(white: 0, alpha: 0.03)
         tf.borderStyle = .roundedRect
         tf.font = UIFont.systemFont(ofSize: 14)
-        tf.translatesAutoresizingMaskIntoConstraints = false
+        tf.autocapitalizationType = .none
+        tf.addTarget(self, action: #selector(handleTextInputChange), for: .editingChanged)
         return tf
     }()
     
     let signUpButton: UIButton = {
         let button = UIButton(type: .system)
+        button.isEnabled = false
         button.setTitle("Sign Up", for: .normal)
-        button.backgroundColor = UIColor(r: 149, g: 204, b: 244)
+        button.backgroundColor = UIColor.rgb(149, 204, 244)
         button.layer.cornerRadius = 5
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
         button.setTitleColor(.white, for: .normal)
+        button.addTarget(self, action: #selector(handleSignUp), for: .touchUpInside)
         return button
     }()
     
@@ -66,16 +71,53 @@ class ViewController: UIViewController {
     
         [addPhotoButton].forEach {view.addSubview($0)}
         
-        NSLayoutConstraint.activate([
-            addPhotoButton.heightAnchor.constraint(equalToConstant: 140),
-            addPhotoButton.widthAnchor.constraint(equalToConstant: 140),
-            addPhotoButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            addPhotoButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 40)
-        ])
+        addPhotoButton.anchor(top: view.topAnchor, bottom: nil, left: nil, right: nil, paddingTop: 40, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, width: 140, height: 140)
+        addPhotoButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         
         setupInputFields()
-        
   }
+    
+    @objc func handleTextInputChange() {
+        let isFormValid = emailTextField.text?.count ?? 0 > 0 && usernameTextField.text?.count ?? 0 > 0 && passwordTextField.text?.count ?? 0 > 0
+        
+        if isFormValid {
+            signUpButton.isEnabled = true
+            signUpButton.backgroundColor = UIColor.rgb(17, 154, 237)
+        } else {
+            signUpButton.isEnabled = false
+            signUpButton.backgroundColor = UIColor.rgb(149, 204, 244)
+        }
+    }
+    
+    @objc func showAlert(message: String) {
+        let alert = UIAlertController(title: "Sign Up", message: message, preferredStyle: .alert)
+        let action = UIAlertAction(title: "OK", style: .default, handler: { action in self.handleTextInputChange()
+        })
+        
+        alert.addAction(action)
+        present(alert, animated: true, completion: nil)
+    }
+    
+    @objc func handleSignUp() {
+        guard let email = emailTextField.text, email.count > 0 else { return }
+        guard let username = usernameTextField.text, !username.isEmpty else { return }
+        guard let password = passwordTextField.text, !password.isEmpty else { return }
+        
+        FIRAuth.auth()?.createUser(withEmail: email, password: password, completion: { (user: FIRUser?, error: Error?) in
+            
+            if let err = error {
+                self.showAlert(message: "Failed to create user.")
+                print("Error: ", err)
+                return
+            }
+            self.showAlert(message: "Successfully created user.")
+            print("Success: ", user?.uid ?? "")
+            
+            self.emailTextField.text = ""
+            self.usernameTextField.text = ""
+            self.passwordTextField.text = ""
+        })
+    }
     
     fileprivate func setupInputFields() {
         let stackView: UIStackView = {
@@ -83,32 +125,12 @@ class ViewController: UIViewController {
             sv.distribution = .fillEqually
             sv.axis = .vertical
             sv.spacing = 10
-            sv.translatesAutoresizingMaskIntoConstraints = false
             return sv
         }()
         
         view.addSubview(stackView)
         
-        NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: addPhotoButton.bottomAnchor, constant: 40),
-            stackView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 40),
-            stackView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -40),
-            stackView.heightAnchor.constraint(equalToConstant: 200)
-        ])
-        
-    }
-
-  override func didReceiveMemoryWarning() {
-    super.didReceiveMemoryWarning()
-    // Dispose of any resources that can be recreated.
-  }
-
-
-}
-
-extension UIColor {
-    convenience init(r: CGFloat, g: CGFloat, b: CGFloat){
-        self.init(red: r/255, green: g/255, blue: b/255, alpha: 1)
+        stackView.anchor(top: addPhotoButton.bottomAnchor, bottom: nil, left: view.leftAnchor, right: view.rightAnchor, paddingTop: 40, paddingBottom: 0, paddingLeft: 40, paddingRight: 40, width: 0, height: 200)
     }
 }
 
