@@ -84,7 +84,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         } else if let originalImage = info["UIImagePickerControllerOriginalImage"] as? UIImage {
             addPhotoButton.setImage(originalImage.withRenderingMode(.alwaysOriginal), for: .normal)
         }
-        
+
         addPhotoButton.layer.cornerRadius = addPhotoButton.frame.width/2
         addPhotoButton.layer.masksToBounds = true
         addPhotoButton.layer.borderColor = UIColor.rgb(17, 154, 237).cgColor
@@ -113,7 +113,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         }
     }
     
-    @objc func showAlert(message: String) {
+    fileprivate func showAlert(message: String) {
         let alert = UIAlertController(title: "Sign Up", message: message, preferredStyle: .alert)
         let action = UIAlertAction(title: "OK", style: .default, handler: { action in self.handleTextInputChange() })
         
@@ -125,7 +125,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         guard let email = emailTextField.text, email.count > 0 else { return }
         guard let username = usernameTextField.text, !username.isEmpty else { return }
         guard let password = passwordTextField.text, !password.isEmpty else { return }
-        
+        //create user to Firebase
         FIRAuth.auth()?.createUser(withEmail: email, password: password, completion: { (user: FIRUser?, err: Error?) in
             
             if let error = err {
@@ -133,40 +133,57 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
                 print("Error: ", error)
                 return
             }
-            self.showAlert(message: "Successfully created user.")
             print("Successfully created user.")
             
+            //Compress image selected for upload to Firebase
             guard let image = self.addPhotoButton.imageView?.image else { return }
             guard let uploadData = UIImageJPEGRepresentation(image, 0.3) else { return }
             
+            //set UID to profile image
             let filename = NSUUID().uuidString
+            //upload profile image to Firebase Storage
             FIRStorage.storage().reference().child("profile_images").child(filename).put(uploadData, metadata: nil, completion: { (metadata, err) in
                 
                 if let error = err {
                     print("Failed to upload profile image: ", error)
                     return
                 }
+                
                 guard let profileImageUrl = metadata?.downloadURL()?.absoluteString else { return }
                 print("Successfully uploaded profile image.")
                 
+                //fetch UID of user from FirAuth
                 guard let uid = user?.uid else { return }
                 
                 let dictionaryValues = ["username":username, "profileImageUrl":profileImageUrl]
                 let values = [uid:dictionaryValues]
-                
+                //add dictionary of user to Firebase Database
                 FIRDatabase.database().reference().child("users").updateChildValues(values, withCompletionBlock: { (err, ref) in
                     
                     if let error = err {
                         print("Failed to save user to DB: ", error)
+                        return
                     }
                     print("Successfully saved user to DB.")
+                    
+                    self.showAlert(message: "Success! You may now log in.")
+                    self.clearRegistrationScreen()
                 })
             })
-            
-            self.emailTextField.text = ""
-            self.usernameTextField.text = ""
-            self.passwordTextField.text = ""
         })
+    }
+    
+    fileprivate func clearRegistrationScreen() {
+        emailTextField.text = ""
+        usernameTextField.text = ""
+        passwordTextField.text = ""
+        if addPhotoButton.currentImage?.size != UIImage(named: "plus_photo")?.size {
+            print("reverting button image to default.")
+            addPhotoButton.setImage(#imageLiteral(resourceName: "plus_photo").withRenderingMode(.alwaysOriginal), for: .normal)
+            addPhotoButton.layer.borderWidth = 0
+        } else {
+            print("No Photo selected.")
+        }
     }
     
     fileprivate func setupInputFields() {
