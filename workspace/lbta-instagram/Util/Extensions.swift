@@ -42,3 +42,14 @@ extension UIView {
         }
     }
 }
+
+extension UIView {
+    func separatorLines(bgColor: UIColor, height: CGFloat) {
+        [self.topAnchor, self.bottomAnchor].forEach{(topAnchor) in
+            let v = UIView()
+            v.backgroundColor = bgColor
+            self.addSubview(v)
+            v.anchor(top: topAnchor, bottom: nil, left: leftAnchor, right: rightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, width: 0, height: height)
+        }
+    }
+}
