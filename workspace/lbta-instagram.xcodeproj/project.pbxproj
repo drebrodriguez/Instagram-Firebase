@@ -14,6 +14,8 @@
 		5A6162BE20918B4A00888B3B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5A6162BC20918B4A00888B3B /* LaunchScreen.storyboard */; };
 		8A5280582097DDC4007FEB28 /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5280572097DDC4007FEB28 /* MainTabBarController.swift */; };
 		8A52805A2097DF04007FEB28 /* UserProfileController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5280592097DF04007FEB28 /* UserProfileController.swift */; };
+		8A5EE97D209984460075CD3D /* UserProfileHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5EE97C209984460075CD3D /* UserProfileHeader.swift */; };
+		8A5EE98020998D320075CD3D /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5EE97F20998D320075CD3D /* User.swift */; };
 		8A5F5D402093371100DC45C0 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5F5D3F2093371100DC45C0 /* Extensions.swift */; };
 		8A5F5D4220943A7900DC45C0 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8A5F5D4120943A7900DC45C0 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
@@ -27,6 +29,8 @@
 		5A6162BF20918B4A00888B3B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8A5280572097DDC4007FEB28 /* MainTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarController.swift; sourceTree = "<group>"; };
 		8A5280592097DF04007FEB28 /* UserProfileController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileController.swift; sourceTree = "<group>"; };
+		8A5EE97C209984460075CD3D /* UserProfileHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileHeader.swift; sourceTree = "<group>"; };
+		8A5EE97F20998D320075CD3D /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		8A5F5D3F2093371100DC45C0 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		8A5F5D4120943A7900DC45C0 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A000E856576403AD76C91039 /* Pods-lbta-instagram.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-lbta-instagram.debug.xcconfig"; path = "Pods/Target Support Files/Pods-lbta-instagram/Pods-lbta-instagram.debug.xcconfig"; sourceTree = "<group>"; };
@@ -76,6 +80,8 @@
 		5A6162B220918B4800888B3B /* lbta-instagram */ = {
 			isa = PBXGroup;
 			children = (
+				8A5EE97E20998D1F0075CD3D /* Model */,
+				8A5EE97B2099842A0075CD3D /* UserProfile */,
 				8A5F5D3E209336CE00DC45C0 /* Util */,
 				5A6162B320918B4800888B3B /* AppDelegate.swift */,
 				5A6162B520918B4900888B3B /* ViewController.swift */,
@@ -87,6 +93,22 @@
 				8A5F5D4120943A7900DC45C0 /* GoogleService-Info.plist */,
 			);
 			path = "lbta-instagram";
+			sourceTree = "<group>";
+		};
+		8A5EE97B2099842A0075CD3D /* UserProfile */ = {
+			isa = PBXGroup;
+			children = (
+				8A5EE97C209984460075CD3D /* UserProfileHeader.swift */,
+			);
+			path = UserProfile;
+			sourceTree = "<group>";
+		};
+		8A5EE97E20998D1F0075CD3D /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				8A5EE97F20998D320075CD3D /* User.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 		8A5F5D3E209336CE00DC45C0 /* Util */ = {
@@ -222,8 +244,10 @@
 				5A6162B620918B4900888B3B /* ViewController.swift in Sources */,
 				8A5F5D402093371100DC45C0 /* Extensions.swift in Sources */,
 				8A5280582097DDC4007FEB28 /* MainTabBarController.swift in Sources */,
+				8A5EE97D209984460075CD3D /* UserProfileHeader.swift in Sources */,
 				8A52805A2097DF04007FEB28 /* UserProfileController.swift in Sources */,
 				5A6162B420918B4800888B3B /* AppDelegate.swift in Sources */,
+				8A5EE98020998D320075CD3D /* User.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

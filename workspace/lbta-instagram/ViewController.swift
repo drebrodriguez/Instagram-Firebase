@@ -125,7 +125,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         guard let email = emailTextField.text, email.count > 0 else { return }
         guard let username = usernameTextField.text, !username.isEmpty else { return }
         guard let password = passwordTextField.text, !password.isEmpty else { return }
-        //create user to Firebase
+        
         FIRAuth.auth()?.createUser(withEmail: email, password: password, completion: { (user: FIRUser?, err: Error?) in
             
             if let error = err {
@@ -135,13 +135,13 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             }
             print("Successfully created user.")
             
-            //Compress image selected for upload to Firebase
+            
             guard let image = self.addPhotoButton.imageView?.image else { return }
             guard let uploadData = UIImageJPEGRepresentation(image, 0.3) else { return }
             
             //set UID to profile image
             let filename = NSUUID().uuidString
-            //upload profile image to Firebase Storage
+            
             FIRStorage.storage().reference().child("profile_images").child(filename).put(uploadData, metadata: nil, completion: { (metadata, err) in
                 
                 if let error = err {
@@ -152,12 +152,12 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
                 guard let profileImageUrl = metadata?.downloadURL()?.absoluteString else { return }
                 print("Successfully uploaded profile image.")
                 
-                //fetch UID of user from FirAuth
+                
                 guard let uid = user?.uid else { return }
                 
                 let dictionaryValues = ["username":username, "profileImageUrl":profileImageUrl]
                 let values = [uid:dictionaryValues]
-                //add dictionary of user to Firebase Database
+                
                 FIRDatabase.database().reference().child("users").updateChildValues(values, withCompletionBlock: { (err, ref) in
                     
                     if let error = err {
@@ -200,4 +200,3 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         stackView.anchor(top: addPhotoButton.bottomAnchor, bottom: nil, left: view.leftAnchor, right: view.rightAnchor, paddingTop: 40, paddingBottom: 0, paddingLeft: 40, paddingRight: 40, width: 0, height: 200)
     }
 }
-
