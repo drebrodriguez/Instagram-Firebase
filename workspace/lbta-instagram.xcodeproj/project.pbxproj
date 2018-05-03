@@ -9,9 +9,10 @@
 /* Begin PBXBuildFile section */
 		0A7664E0F71B1151BEB6CDAA /* Pods_lbta_instagram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3CE9E68914A73518BC71CFE /* Pods_lbta_instagram.framework */; };
 		5A6162B420918B4800888B3B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A6162B320918B4800888B3B /* AppDelegate.swift */; };
-		5A6162B620918B4900888B3B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A6162B520918B4900888B3B /* ViewController.swift */; };
+		5A6162B620918B4900888B3B /* SignUpController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A6162B520918B4900888B3B /* SignUpController.swift */; };
 		5A6162BB20918B4A00888B3B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5A6162BA20918B4A00888B3B /* Assets.xcassets */; };
 		5A6162BE20918B4A00888B3B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5A6162BC20918B4A00888B3B /* LaunchScreen.storyboard */; };
+		8A1BE21D209AF5FC00362E95 /* LoginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1BE21C209AF5FC00362E95 /* LoginController.swift */; };
 		8A5280582097DDC4007FEB28 /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5280572097DDC4007FEB28 /* MainTabBarController.swift */; };
 		8A52805A2097DF04007FEB28 /* UserProfileController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5280592097DF04007FEB28 /* UserProfileController.swift */; };
 		8A5EE97D209984460075CD3D /* UserProfileHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5EE97C209984460075CD3D /* UserProfileHeader.swift */; };
@@ -23,10 +24,11 @@
 /* Begin PBXFileReference section */
 		5A6162B020918B4800888B3B /* lbta-instagram.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "lbta-instagram.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5A6162B320918B4800888B3B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		5A6162B520918B4900888B3B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		5A6162B520918B4900888B3B /* SignUpController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpController.swift; sourceTree = "<group>"; };
 		5A6162BA20918B4A00888B3B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5A6162BD20918B4A00888B3B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5A6162BF20918B4A00888B3B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8A1BE21C209AF5FC00362E95 /* LoginController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginController.swift; sourceTree = "<group>"; };
 		8A5280572097DDC4007FEB28 /* MainTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarController.swift; sourceTree = "<group>"; };
 		8A5280592097DF04007FEB28 /* UserProfileController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileController.swift; sourceTree = "<group>"; };
 		8A5EE97C209984460075CD3D /* UserProfileHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileHeader.swift; sourceTree = "<group>"; };
@@ -80,24 +82,41 @@
 		5A6162B220918B4800888B3B /* lbta-instagram */ = {
 			isa = PBXGroup;
 			children = (
+				8A1BE21B209AF5E400362E95 /* Login */,
 				8A5EE97E20998D1F0075CD3D /* Model */,
 				8A5EE97B2099842A0075CD3D /* UserProfile */,
-				8A5F5D3E209336CE00DC45C0 /* Util */,
 				5A6162B320918B4800888B3B /* AppDelegate.swift */,
-				5A6162B520918B4900888B3B /* ViewController.swift */,
 				8A5280572097DDC4007FEB28 /* MainTabBarController.swift */,
-				8A5280592097DF04007FEB28 /* UserProfileController.swift */,
-				5A6162BA20918B4A00888B3B /* Assets.xcassets */,
-				5A6162BC20918B4A00888B3B /* LaunchScreen.storyboard */,
+				8A5F5D3E209336CE00DC45C0 /* Extensions */,
+				8A1BE21A209ABC3000362E95 /* Resources */,
 				5A6162BF20918B4A00888B3B /* Info.plist */,
 				8A5F5D4120943A7900DC45C0 /* GoogleService-Info.plist */,
 			);
 			path = "lbta-instagram";
 			sourceTree = "<group>";
 		};
+		8A1BE21A209ABC3000362E95 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				5A6162BA20918B4A00888B3B /* Assets.xcassets */,
+				5A6162BC20918B4A00888B3B /* LaunchScreen.storyboard */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		8A1BE21B209AF5E400362E95 /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				8A1BE21C209AF5FC00362E95 /* LoginController.swift */,
+				5A6162B520918B4900888B3B /* SignUpController.swift */,
+			);
+			path = Login;
+			sourceTree = "<group>";
+		};
 		8A5EE97B2099842A0075CD3D /* UserProfile */ = {
 			isa = PBXGroup;
 			children = (
+				8A5280592097DF04007FEB28 /* UserProfileController.swift */,
 				8A5EE97C209984460075CD3D /* UserProfileHeader.swift */,
 			);
 			path = UserProfile;
@@ -111,12 +130,12 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
-		8A5F5D3E209336CE00DC45C0 /* Util */ = {
+		8A5F5D3E209336CE00DC45C0 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
 				8A5F5D3F2093371100DC45C0 /* Extensions.swift */,
 			);
-			path = Util;
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		CD64AD5CB480F62CA6BD5A02 /* Frameworks */ = {
@@ -241,11 +260,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5A6162B620918B4900888B3B /* ViewController.swift in Sources */,
+				5A6162B620918B4900888B3B /* SignUpController.swift in Sources */,
 				8A5F5D402093371100DC45C0 /* Extensions.swift in Sources */,
 				8A5280582097DDC4007FEB28 /* MainTabBarController.swift in Sources */,
 				8A5EE97D209984460075CD3D /* UserProfileHeader.swift in Sources */,
 				8A52805A2097DF04007FEB28 /* UserProfileController.swift in Sources */,
+				8A1BE21D209AF5FC00362E95 /* LoginController.swift in Sources */,
 				5A6162B420918B4800888B3B /* AppDelegate.swift in Sources */,
 				8A5EE98020998D320075CD3D /* User.swift in Sources */,
 			);
