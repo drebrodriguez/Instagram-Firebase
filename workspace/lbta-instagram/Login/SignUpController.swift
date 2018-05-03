@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 
-class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
     let addPhotoButton: UIButton = {
         let button = UIButton(type: .system)
@@ -64,15 +64,26 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         return button
     }()
     
+    let haveAccountButton: UIButton = {
+        let btn = UIButton(type: .system)
+        let attributedTitle = NSMutableAttributedString(string: "Already have an account? ", attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 14), NSAttributedStringKey.foregroundColor:UIColor.lightGray])
+        attributedTitle.append(NSAttributedString(string: "Sign In", attributes: [NSAttributedStringKey.font:UIFont.boldSystemFont(ofSize: 14), NSAttributedStringKey.foregroundColor:UIColor.rgb(17, 154, 237)]))
+        btn.setAttributedTitle(attributedTitle, for: .normal)
+        btn.addTarget(self, action: #selector(handleHaveAccount), for: .touchUpInside)
+        return btn
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.backgroundColor = .white
     
-        [addPhotoButton].forEach {view.addSubview($0)}
+        [addPhotoButton, haveAccountButton].forEach {view.addSubview($0)}
         
         addPhotoButton.anchor(top: view.topAnchor, bottom: nil, left: nil, right: nil, paddingTop: 40, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, width: 140, height: 140)
         addPhotoButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        
+        haveAccountButton.anchor(top: nil, bottom: view.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, width: 0, height: 50)
         
         setupInputFields()
   }
@@ -91,6 +102,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         addPhotoButton.layer.borderWidth = 3
         
         dismiss(animated: true, completion: nil)
+    }
+    
+    @objc fileprivate func handleHaveAccount() {
+        navigationController?.popViewController(animated: true)
     }
     
     @objc func handleAddPhoto() {

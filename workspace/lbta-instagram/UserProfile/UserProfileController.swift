@@ -22,6 +22,33 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         collectionView?.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cellId")
         
         fetchUser()
+        
+        setupLogOutButton()
+    }
+    
+    fileprivate func setupLogOutButton() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "gear").withRenderingMode(.alwaysOriginal), style: UIBarButtonItemStyle.plain, target: self, action: #selector(handleLogOut))
+    }
+    
+    @objc fileprivate func handleLogOut() {
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let logout = UIAlertAction(title: "Log Out", style: .destructive) { (_) in
+            
+            do {
+                try FIRAuth.auth()?.signOut()
+                
+                
+                
+            } catch let err {
+                print("Failed to sign out:", err)
+            }
+            
+        }
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        
+        [logout,cancel].forEach{(alert.addAction($0))}
+        
+        present(alert, animated: true, completion: nil)
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

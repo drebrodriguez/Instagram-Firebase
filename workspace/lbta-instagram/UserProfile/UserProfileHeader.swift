@@ -99,7 +99,8 @@ class UserProfileHeader: UICollectionViewCell {
         profileImageView.anchor(top: topAnchor, bottom: nil, left: leftAnchor, right: nil, paddingTop: 12, paddingBottom: 12, paddingLeft: 12, paddingRight: 12, width: 80, height: 80)
         
         usernameLabel.anchor(top: profileImageView.bottomAnchor, bottom: nil, left: nil, right: nil, paddingTop: 12, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, width: 0, height: 0)
-        usernameLabel.centerXAnchor.constraint(equalTo: profileImageView.centerXAnchor).isActive = true
+        usernameLabel.anchorXYCenter(centerX: profileImageView.centerXAnchor, centerY: nil)
+//        usernameLabel.centerXAnchor.constraint(equalTo: profileImageView.centerXAnchor).isActive = true
         
         setupUserStats()
         
