@@ -180,25 +180,27 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
                     }
                     print("Successfully saved user to DB.")
                     
-                    self.showAlert(message: "Success! You may now log in.")
-                    self.clearRegistrationScreen()
+                    guard let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController else { return }
+                    mainTabBarController.setupViewControllers()
+                    
+                    self.dismiss(animated: true, completion: nil)
                 })
             })
         })
     }
     
-    fileprivate func clearRegistrationScreen() {
-        emailTextField.text = ""
-        usernameTextField.text = ""
-        passwordTextField.text = ""
-        if addPhotoButton.currentImage?.size != UIImage(named: "plus_photo")?.size {
-            print("reverting button image to default.")
-            addPhotoButton.setImage(#imageLiteral(resourceName: "plus_photo").withRenderingMode(.alwaysOriginal), for: .normal)
-            addPhotoButton.layer.borderWidth = 0
-        } else {
-            print("No Photo selected.")
-        }
-    }
+//    fileprivate func clearRegistrationScreen() {
+//        emailTextField.text = ""
+//        usernameTextField.text = ""
+//        passwordTextField.text = ""
+//        if addPhotoButton.currentImage?.size != UIImage(named: "plus_photo")?.size {
+//            print("reverting button image to default.")
+//            addPhotoButton.setImage(#imageLiteral(resourceName: "plus_photo").withRenderingMode(.alwaysOriginal), for: .normal)
+//            addPhotoButton.layer.borderWidth = 0
+//        } else {
+//            print("No Photo selected.")
+//        }
+//    }
     
     fileprivate func setupInputFields() {
         let stackView: UIStackView = {

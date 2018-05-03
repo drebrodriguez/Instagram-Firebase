@@ -37,7 +37,8 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
             do {
                 try FIRAuth.auth()?.signOut()
                 
-                
+                let navController = UINavigationController(rootViewController: LoginController())
+                self.present(navController, animated: true, completion: nil)
                 
             } catch let err {
                 print("Failed to sign out:", err)

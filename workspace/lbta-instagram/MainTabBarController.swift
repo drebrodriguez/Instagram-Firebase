@@ -16,12 +16,15 @@ class MainTabBarController: UITabBarController {
         if FIRAuth.auth()?.currentUser == nil {
             DispatchQueue.main.async {
                 let navController = UINavigationController(rootViewController: LoginController())
-                navController.isNavigationBarHidden = true
                 self.present(navController, animated: true, completion: nil)
                 return
             }
         }
         
+        setupViewControllers()
+    }
+    
+    func setupViewControllers() {
         let layout = UICollectionViewFlowLayout()
         let userProfileController = UserProfileController(collectionViewLayout: layout)
         let navController = UINavigationController(rootViewController: userProfileController)

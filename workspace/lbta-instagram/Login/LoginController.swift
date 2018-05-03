@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 class LoginController: UIViewController {
     
@@ -28,7 +29,7 @@ class LoginController: UIViewController {
         tf.borderStyle = .roundedRect
         tf.font = UIFont.systemFont(ofSize: 14)
         tf.autocapitalizationType = .none
-//        tf.addTarget(self, action: #selector(handleTextInputChange), for: .editingChanged)
+        tf.addTarget(self, action: #selector(handleTextInputChange), for: .editingChanged)
         return tf
     }()
     
@@ -40,7 +41,7 @@ class LoginController: UIViewController {
         tf.borderStyle = .roundedRect
         tf.font = UIFont.systemFont(ofSize: 14)
         tf.autocapitalizationType = .none
-//        tf.addTarget(self, action: #selector(handleTextInputChange), for: .editingChanged)
+        tf.addTarget(self, action: #selector(handleTextInputChange), for: .editingChanged)
         return tf
     }()
     
@@ -52,7 +53,7 @@ class LoginController: UIViewController {
         button.layer.cornerRadius = 5
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
         button.setTitleColor(.white, for: .normal)
-//        button.addTarget(self, action: #selector(handleSignUp), for: .touchUpInside)
+        button.addTarget(self, action: #selector(handleLogin), for: .touchUpInside)
         return button
     }()
     
@@ -73,6 +74,8 @@ class LoginController: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = .white
+        
+        navigationController?.isNavigationBarHidden = true
         
         [logoContainerView, signUpButton].forEach{view.addSubview($0)}
         
@@ -96,10 +99,38 @@ class LoginController: UIViewController {
         stackview.anchor(top: logoContainerView.bottomAnchor, bottom: nil, left: view.leftAnchor, right: view.rightAnchor, paddingTop: 40, paddingBottom: 0, paddingLeft: 40, paddingRight: 40, width: 0, height: 140)
     }
     
-    @objc fileprivate func handleShowSignUp() {
-        navigationController?.pushViewController(SignUpController(), animated: true)
-//        present(SignUpController(), animated: true, completion: nil)
+    @objc fileprivate func handleLogin() {
+        guard let email = emailTextField.text else { return }
+        guard let password = passwordTextField.text else { return }
+        
+        FIRAuth.auth()?.signIn(withEmail: email, password: password, completion: { (user, err) in
+            if let err = err {
+                print("Failed to sign in: ", err)
+                return
+            }
+            print("Successful login: ", user?.uid ?? "")
+            
+            guard let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController else { return }
+            mainTabBarController.setupViewControllers()
+            
+            self.dismiss(animated: true, completion: nil)
+        })
     }
     
+    @objc fileprivate func handleShowSignUp() {
+        navigationController?.pushViewController(SignUpController(), animated: true)
+    }
+    
+    @objc func handleTextInputChange() {
+        let isFormValid = emailTextField.text?.count ?? 0 > 0 && passwordTextField.text?.count ?? 0 > 0
+        
+        if isFormValid {
+            loginButton.isEnabled = true
+            loginButton.backgroundColor = UIColor.rgb(17, 154, 237)
+        } else {
+            loginButton.isEnabled = false
+            loginButton.backgroundColor = UIColor.rgb(149, 204, 244)
+        }
+    }
     
 }
