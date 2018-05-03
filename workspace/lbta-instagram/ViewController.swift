@@ -135,7 +135,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             }
             print("Successfully created user.")
             
-            
             guard let image = self.addPhotoButton.imageView?.image else { return }
             guard let uploadData = UIImageJPEGRepresentation(image, 0.3) else { return }
             
