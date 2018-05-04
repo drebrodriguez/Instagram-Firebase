@@ -13,6 +13,7 @@
 		5A6162BB20918B4A00888B3B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5A6162BA20918B4A00888B3B /* Assets.xcassets */; };
 		5A6162BE20918B4A00888B3B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5A6162BC20918B4A00888B3B /* LaunchScreen.storyboard */; };
 		8A1BE21D209AF5FC00362E95 /* LoginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1BE21C209AF5FC00362E95 /* LoginController.swift */; };
+		8A1BE220209BF1A000362E95 /* PhotoSelectorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1BE21F209BF1A000362E95 /* PhotoSelectorController.swift */; };
 		8A5280582097DDC4007FEB28 /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5280572097DDC4007FEB28 /* MainTabBarController.swift */; };
 		8A52805A2097DF04007FEB28 /* UserProfileController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5280592097DF04007FEB28 /* UserProfileController.swift */; };
 		8A5EE97D209984460075CD3D /* UserProfileHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5EE97C209984460075CD3D /* UserProfileHeader.swift */; };
@@ -29,6 +30,7 @@
 		5A6162BD20918B4A00888B3B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5A6162BF20918B4A00888B3B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8A1BE21C209AF5FC00362E95 /* LoginController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginController.swift; sourceTree = "<group>"; };
+		8A1BE21F209BF1A000362E95 /* PhotoSelectorController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoSelectorController.swift; sourceTree = "<group>"; };
 		8A5280572097DDC4007FEB28 /* MainTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarController.swift; sourceTree = "<group>"; };
 		8A5280592097DF04007FEB28 /* UserProfileController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileController.swift; sourceTree = "<group>"; };
 		8A5EE97C209984460075CD3D /* UserProfileHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileHeader.swift; sourceTree = "<group>"; };
@@ -82,6 +84,7 @@
 		5A6162B220918B4800888B3B /* lbta-instagram */ = {
 			isa = PBXGroup;
 			children = (
+				8A1BE21E209BF18400362E95 /* AddPhoto */,
 				8A1BE21B209AF5E400362E95 /* Login */,
 				8A5EE97E20998D1F0075CD3D /* Model */,
 				8A5EE97B2099842A0075CD3D /* UserProfile */,
@@ -111,6 +114,14 @@
 				5A6162B520918B4900888B3B /* SignUpController.swift */,
 			);
 			path = Login;
+			sourceTree = "<group>";
+		};
+		8A1BE21E209BF18400362E95 /* AddPhoto */ = {
+			isa = PBXGroup;
+			children = (
+				8A1BE21F209BF1A000362E95 /* PhotoSelectorController.swift */,
+			);
+			path = AddPhoto;
 			sourceTree = "<group>";
 		};
 		8A5EE97B2099842A0075CD3D /* UserProfile */ = {
@@ -263,6 +274,7 @@
 				5A6162B620918B4900888B3B /* SignUpController.swift in Sources */,
 				8A5F5D402093371100DC45C0 /* Extensions.swift in Sources */,
 				8A5280582097DDC4007FEB28 /* MainTabBarController.swift in Sources */,
+				8A1BE220209BF1A000362E95 /* PhotoSelectorController.swift in Sources */,
 				8A5EE97D209984460075CD3D /* UserProfileHeader.swift in Sources */,
 				8A52805A2097DF04007FEB28 /* UserProfileController.swift in Sources */,
 				8A1BE21D209AF5FC00362E95 /* LoginController.swift in Sources */,
