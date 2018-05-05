@@ -20,6 +20,8 @@
 		8A5EE98020998D320075CD3D /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5EE97F20998D320075CD3D /* User.swift */; };
 		8A5F5D402093371100DC45C0 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5F5D3F2093371100DC45C0 /* Extensions.swift */; };
 		8A5F5D4220943A7900DC45C0 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8A5F5D4120943A7900DC45C0 /* GoogleService-Info.plist */; };
+		8A8D26EB209D83E200524671 /* PhotoSelectorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8D26EA209D83E200524671 /* PhotoSelectorCell.swift */; };
+		8A8D26ED209D96E900524671 /* PhotoSelectorHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8D26EC209D96E900524671 /* PhotoSelectorHeader.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +39,8 @@
 		8A5EE97F20998D320075CD3D /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		8A5F5D3F2093371100DC45C0 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		8A5F5D4120943A7900DC45C0 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		8A8D26EA209D83E200524671 /* PhotoSelectorCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoSelectorCell.swift; sourceTree = "<group>"; };
+		8A8D26EC209D96E900524671 /* PhotoSelectorHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoSelectorHeader.swift; sourceTree = "<group>"; };
 		A000E856576403AD76C91039 /* Pods-lbta-instagram.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-lbta-instagram.debug.xcconfig"; path = "Pods/Target Support Files/Pods-lbta-instagram/Pods-lbta-instagram.debug.xcconfig"; sourceTree = "<group>"; };
 		E3CE9E68914A73518BC71CFE /* Pods_lbta_instagram.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_lbta_instagram.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC5DFE7B973929CCA0172AF1 /* Pods-lbta-instagram.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-lbta-instagram.release.xcconfig"; path = "Pods/Target Support Files/Pods-lbta-instagram/Pods-lbta-instagram.release.xcconfig"; sourceTree = "<group>"; };
@@ -120,6 +124,8 @@
 			isa = PBXGroup;
 			children = (
 				8A1BE21F209BF1A000362E95 /* PhotoSelectorController.swift */,
+				8A8D26EA209D83E200524671 /* PhotoSelectorCell.swift */,
+				8A8D26EC209D96E900524671 /* PhotoSelectorHeader.swift */,
 			);
 			path = AddPhoto;
 			sourceTree = "<group>";
@@ -277,9 +283,11 @@
 				8A1BE220209BF1A000362E95 /* PhotoSelectorController.swift in Sources */,
 				8A5EE97D209984460075CD3D /* UserProfileHeader.swift in Sources */,
 				8A52805A2097DF04007FEB28 /* UserProfileController.swift in Sources */,
+				8A8D26ED209D96E900524671 /* PhotoSelectorHeader.swift in Sources */,
 				8A1BE21D209AF5FC00362E95 /* LoginController.swift in Sources */,
 				5A6162B420918B4800888B3B /* AppDelegate.swift in Sources */,
 				8A5EE98020998D320075CD3D /* User.swift in Sources */,
+				8A8D26EB209D83E200524671 /* PhotoSelectorCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
