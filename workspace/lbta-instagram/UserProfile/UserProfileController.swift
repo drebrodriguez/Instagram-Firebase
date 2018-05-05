@@ -20,7 +20,6 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         collectionView?.backgroundColor = .white
         
         collectionView?.register(UserProfileHeader.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headerId)
-        
         collectionView?.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellId)
         
         fetchUser()
@@ -91,10 +90,11 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     }
     
     fileprivate func fetchUser() {
+        let activity = activityIndicator()
+        activity.startAnimating()
+        
         guard let uid = FIRAuth.auth()?.currentUser?.uid else { return }
         FIRDatabase.database().reference().child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
-            
-            print(snapshot.value ?? "")
             
             guard let dictionary = snapshot.value as? [String:Any] else { return }
             
@@ -102,9 +102,10 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
             
             self.navigationItem.title = self.user?.username
             self.collectionView?.reloadData()
-            
+            activity.stopAnimating()
         }) { (err) in
             print("Failed to fetch user: ", err)
+            activity.stopAnimating()
         }
     }
 }

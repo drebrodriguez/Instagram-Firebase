@@ -10,7 +10,7 @@ import UIKit
 import Firebase
 
 class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-
+    
     let addPhotoButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(#imageLiteral(resourceName: "plus_photo").withRenderingMode(.alwaysOriginal), for: .normal)
@@ -89,7 +89,6 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
   }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-        
         if let editedImage = info["UIImagePickerControllerEditedImage"] as? UIImage {
             addPhotoButton.setImage(editedImage.withRenderingMode(.alwaysOriginal), for: .normal)
         } else if let originalImage = info["UIImagePickerControllerOriginalImage"] as? UIImage {
@@ -128,24 +127,21 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
         }
     }
     
-    fileprivate func showAlert(message: String) {
-        let alert = UIAlertController(title: "Sign Up", message: message, preferredStyle: .alert)
-        let action = UIAlertAction(title: "OK", style: .default, handler: { action in self.handleTextInputChange() })
-        
-        alert.addAction(action)
-        present(alert, animated: true, completion: nil)
-    }
-    
     @objc func handleSignUp() {
         guard let email = emailTextField.text, email.count > 0 else { return }
         guard let username = usernameTextField.text, !username.isEmpty else { return }
         guard let password = passwordTextField.text, !password.isEmpty else { return }
         
+        let activity = activityIndicator()
+        
+        activity.startAnimating()
         FIRAuth.auth()?.createUser(withEmail: email, password: password, completion: { (user: FIRUser?, err: Error?) in
             
             if let error = err {
-                self.showAlert(message: "Failed to create user.")
+//                self.showAlert(message: "Failed to create user.")
                 print("Error: ", error)
+                self.showAlert(alertTitle: "Sign Up Error", message: "Failed to create user. Try again.")
+                activity.stopAnimating()
                 return
             }
             print("Successfully created user.")
@@ -183,24 +179,12 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
                     guard let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController else { return }
                     mainTabBarController.setupViewControllers()
                     
+                    activity.stopAnimating()
                     self.dismiss(animated: true, completion: nil)
                 })
             })
         })
     }
-    
-//    fileprivate func clearRegistrationScreen() {
-//        emailTextField.text = ""
-//        usernameTextField.text = ""
-//        passwordTextField.text = ""
-//        if addPhotoButton.currentImage?.size != UIImage(named: "plus_photo")?.size {
-//            print("reverting button image to default.")
-//            addPhotoButton.setImage(#imageLiteral(resourceName: "plus_photo").withRenderingMode(.alwaysOriginal), for: .normal)
-//            addPhotoButton.layer.borderWidth = 0
-//        } else {
-//            print("No Photo selected.")
-//        }
-//    }
     
     fileprivate func setupInputFields() {
         let stackView: UIStackView = {

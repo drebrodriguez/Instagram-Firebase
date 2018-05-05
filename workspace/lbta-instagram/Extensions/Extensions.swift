@@ -42,7 +42,7 @@ extension UIView {
         }
     }
     
-    func anchorXYCenter(centerX: NSLayoutXAxisAnchor?, centerY: NSLayoutYAxisAnchor?) {
+    func anchorXYCenter(centerX: NSLayoutXAxisAnchor?, centerY: NSLayoutYAxisAnchor?, width: CGFloat, height: CGFloat) {
         translatesAutoresizingMaskIntoConstraints = false
         
         if let centerX = centerX {
@@ -51,11 +51,14 @@ extension UIView {
         if let centerY = centerY {
             centerYAnchor.constraint(equalTo: centerY).isActive = true
         }
-        
+        if width != 0 {
+            widthAnchor.constraint(equalToConstant: width).isActive = true
+        }
+        if height != 0 {
+            heightAnchor.constraint(equalToConstant: height).isActive = true
+        }
     }
-}
-
-extension UIView {
+    
     func separatorLines(bgColor: UIColor, height: CGFloat) {
         [self.topAnchor, self.bottomAnchor].forEach{(topAnchor) in
             let v = UIView()
@@ -63,5 +66,33 @@ extension UIView {
             self.addSubview(v)
             v.anchor(top: topAnchor, bottom: nil, left: leftAnchor, right: rightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, width: 0, height: height)
         }
+    }
+}
+
+extension UIViewController {
+    func activityIndicator() -> UIActivityIndicatorView{
+        let activity: UIActivityIndicatorView = {
+            let aiv = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
+            aiv.backgroundColor = UIColor(white: 0, alpha: 0.05)
+            aiv.layer.cornerRadius = 5
+            aiv.layer.masksToBounds = true
+            aiv.hidesWhenStopped = true
+            return aiv
+        }()
+        
+        view.addSubview(activity)
+        view.bringSubview(toFront: activity)
+        
+        activity.anchorXYCenter(centerX: view.centerXAnchor, centerY: view.centerYAnchor, width: 50, height: 50)
+        
+        return activity
+    }
+    
+    func showAlert(alertTitle: String, message: String) {
+        let alert = UIAlertController(title: alertTitle, message: message, preferredStyle: .alert)
+        let action = UIAlertAction(title: "OK", style: .default, handler: nil)
+        
+        alert.addAction(action)
+        present(alert, animated: true, completion: nil)
     }
 }

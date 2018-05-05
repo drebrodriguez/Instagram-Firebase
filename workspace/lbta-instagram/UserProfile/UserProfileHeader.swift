@@ -99,7 +99,7 @@ class UserProfileHeader: UICollectionViewCell {
         profileImageView.anchor(top: topAnchor, bottom: nil, left: leftAnchor, right: nil, paddingTop: 12, paddingBottom: 12, paddingLeft: 12, paddingRight: 12, width: 80, height: 80)
         
         usernameLabel.anchor(top: profileImageView.bottomAnchor, bottom: nil, left: nil, right: nil, paddingTop: 12, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, width: 0, height: 0)
-        usernameLabel.anchorXYCenter(centerX: profileImageView.centerXAnchor, centerY: nil)
+        usernameLabel.anchorXYCenter(centerX: profileImageView.centerXAnchor, centerY: nil, width: 0, height: 0)
         
         setupUserStats()
         
@@ -125,14 +125,8 @@ class UserProfileHeader: UICollectionViewCell {
             sv.distribution = .fillEqually
             return sv
         }()
-        
-        let topDividerView = UIView()
-        topDividerView.backgroundColor = UIColor.lightGray
-        
-        let bottomDividerView = UIView()
-        bottomDividerView.backgroundColor = UIColor.lightGray
-        
-        [stackview,topDividerView,bottomDividerView].forEach{addSubview($0)}
+                
+        [stackview].forEach{addSubview($0)}
 
         stackview.anchor(top: nil, bottom: bottomAnchor, left: leftAnchor, right: rightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, width: 0, height: 50)
         

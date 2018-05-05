@@ -17,8 +17,7 @@ class LoginController: UIViewController {
         logoImageView.contentMode = .scaleAspectFill
         view.backgroundColor = UIColor.rgb(17, 154, 237)
         view.addSubview(logoImageView)
-        logoImageView.anchor(top: nil, bottom: nil, left: nil, right: nil, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, width: 200, height: 50)
-        logoImageView.anchorXYCenter(centerX: view.centerXAnchor, centerY: view.centerYAnchor)
+        logoImageView.anchorXYCenter(centerX: view.centerXAnchor, centerY: view.centerYAnchor, width: 200, height: 50)
         return view
     }()
     
@@ -103,16 +102,21 @@ class LoginController: UIViewController {
         guard let email = emailTextField.text else { return }
         guard let password = passwordTextField.text else { return }
         
+        let activity = activityIndicator()
+        
+        activity.startAnimating()
         FIRAuth.auth()?.signIn(withEmail: email, password: password, completion: { (user, err) in
             if let err = err {
                 print("Failed to sign in: ", err)
+                self.showAlert(alertTitle: "Login Error", message: "Failed to log in. Try again.")
+                activity.stopAnimating()
                 return
             }
-            print("Successful login: ", user?.uid ?? "")
             
             guard let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController else { return }
             mainTabBarController.setupViewControllers()
             
+            activity.stopAnimating()
             self.dismiss(animated: true, completion: nil)
         })
     }
