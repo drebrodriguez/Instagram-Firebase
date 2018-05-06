@@ -103,21 +103,20 @@ class LoginController: UIViewController {
         guard let password = passwordTextField.text else { return }
         
         let activity = activityIndicator()
-        
         activity.startAnimating()
+        
         FIRAuth.auth()?.signIn(withEmail: email, password: password, completion: { (user, err) in
             if let err = err {
                 print("Failed to sign in: ", err)
-                self.showAlert(alertTitle: "Login Error", message: "Failed to log in. Try again.")
                 activity.stopAnimating()
+                self.showAlert(alertTitle: "Login Error", message: "Failed to log in. Try again.")
                 return
             }
             
             guard let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController else { return }
             mainTabBarController.setupViewControllers()
             
-            activity.stopAnimating()
-            self.dismiss(animated: true, completion: nil)
+            self.dismiss(animated: true, completion: activity.stopAnimating)
         })
     }
     
