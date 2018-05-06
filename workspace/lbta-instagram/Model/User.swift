@@ -6,6 +6,8 @@
 //  Copyright © 2018 Joash Tubaga. All rights reserved.
 //
 
+import UIKit
+
 struct User {
     let username: String
     let profileImageUrl: String

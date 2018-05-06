@@ -26,7 +26,7 @@ extension UIView {
             topAnchor.constraint(equalTo: top, constant: paddingTop).isActive = true
         }
         if let bottom = bottom {
-            bottomAnchor.constraint(equalTo: bottom, constant: paddingBottom).isActive = true
+            bottomAnchor.constraint(equalTo: bottom, constant: -paddingBottom).isActive = true
         }
         if let left = left {
             leftAnchor.constraint(equalTo: left, constant: paddingLeft).isActive = true
@@ -72,9 +72,9 @@ extension UIView {
 extension UIViewController {
     func activityIndicator() -> UIActivityIndicatorView{
         let activity: UIActivityIndicatorView = {
-            let aiv = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
-            aiv.backgroundColor = UIColor(white: 0, alpha: 0.05)
-            aiv.layer.cornerRadius = 5
+            let aiv = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.whiteLarge)
+            aiv.backgroundColor = UIColor(white: 0, alpha: 0.4)
+            aiv.layer.cornerRadius = 20
             aiv.layer.masksToBounds = true
             aiv.hidesWhenStopped = true
             return aiv
@@ -83,7 +83,7 @@ extension UIViewController {
         view.addSubview(activity)
         view.bringSubview(toFront: activity)
         
-        activity.anchorXYCenter(centerX: view.centerXAnchor, centerY: view.centerYAnchor, width: 50, height: 50)
+        activity.anchorXYCenter(centerX: view.centerXAnchor, centerY: view.centerYAnchor, width: 80, height: 80)
         
         return activity
     }

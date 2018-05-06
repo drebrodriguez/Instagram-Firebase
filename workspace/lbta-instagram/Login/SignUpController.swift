@@ -133,19 +133,17 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
         guard let password = passwordTextField.text, !password.isEmpty else { return }
         
         let activity = activityIndicator()
-        
         activity.startAnimating()
+        
         FIRAuth.auth()?.createUser(withEmail: email, password: password, completion: { (user: FIRUser?, err: Error?) in
-            
             if let error = err {
-//                self.showAlert(message: "Failed to create user.")
                 print("Error: ", error)
-                self.showAlert(alertTitle: "Sign Up Error", message: "Failed to create user. Try again.")
                 activity.stopAnimating()
+                self.showAlert(alertTitle: "Sign Up Error", message: "Failed to create user. Try again.")
                 return
             }
             print("Successfully created user.")
-            
+            //
             guard let image = self.addPhotoButton.imageView?.image else { return }
             guard let uploadData = UIImageJPEGRepresentation(image, 0.3) else { return }
             
@@ -153,7 +151,6 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
             let filename = NSUUID().uuidString
             
             FIRStorage.storage().reference().child("profile_images").child(filename).put(uploadData, metadata: nil, completion: { (metadata, err) in
-                
                 if let error = err {
                     print("Failed to upload profile image: ", error)
                     return
@@ -162,14 +159,13 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
                 guard let profileImageUrl = metadata?.downloadURL()?.absoluteString else { return }
                 print("Successfully uploaded profile image.")
                 
-                
+                //
                 guard let uid = user?.uid else { return }
                 
                 let dictionaryValues = ["username":username, "profileImageUrl":profileImageUrl]
                 let values = [uid:dictionaryValues]
                 
                 FIRDatabase.database().reference().child("users").updateChildValues(values, withCompletionBlock: { (err, ref) in
-                    
                     if let error = err {
                         print("Failed to save user to DB: ", error)
                         return
@@ -179,8 +175,7 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
                     guard let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController else { return }
                     mainTabBarController.setupViewControllers()
                     
-                    activity.stopAnimating()
-                    self.dismiss(animated: true, completion: nil)
+                    self.dismiss(animated: true, completion: activity.stopAnimating)
                 })
             })
         })
