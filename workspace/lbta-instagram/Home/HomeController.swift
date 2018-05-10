@@ -55,7 +55,13 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: view.frame.width, height: 300)
+        
+        var height: CGFloat = 40 + 16
+        height += view.frame.width
+        height += 50
+        height += 80
+        
+        return CGSize(width: view.frame.width, height: height)
     }
     
     fileprivate func setupNavBarItems() {
