@@ -33,31 +33,16 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         
         guard let uid = FIRAuth.auth()?.currentUser?.uid else { return }
         //FETCH USER
-        FIRDatabase.database().reference().child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
-            
-            guard let dictionary = snapshot.value as? [String: Any] else { return }
-            self.user = User(dictionary: dictionary)
-            
+        FIRDatabase.fetchUserWithUID(uid: uid) { (user) in
+            self.user = user
             self.navigationItem.title = self.user?.username
-            //FETCH POST
-            let postRef = FIRDatabase.database().reference().child("posts").child(uid)
-            postRef.queryOrdered(byChild: "creationDate").observe(.childAdded, with: {(snapshot) in
-                
-                guard let dictionary = snapshot.value as? [String: Any] else { return }
-                guard let user = self.user else { return }
-                let post = Post(user: user, dictionary: dictionary)
+            //FETCH POSTS
+            FIRDatabase.fetchPostWithUser(user: user, completion: { (post) in
                 self.posts.insert(post, at: 0)
                 
+                activity.stopAnimating()
                 self.collectionView?.reloadData()
-            }) { (err) in
-                print("Failed to fetch posts @UserProfile:", err)
-            }
-            
-            activity.stopAnimating()
-            self.collectionView?.reloadData()
-        }) { (err) in
-            print("Failed to fetch user: ", err)
-            activity.stopAnimating()
+            })
         }
     }
     
