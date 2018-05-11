@@ -22,26 +22,42 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         collectionView?.register(UserProfileHeader.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headerId)
         collectionView?.register(UserProfilePhotoCell.self, forCellWithReuseIdentifier: cellId)
         
-        fetchUser()
+        fetchUserAndPost()
         
         setupLogOutButton()
-        
-        fetchPost()
     }
     
-    fileprivate func fetchPost() {
+    fileprivate func fetchUserAndPost() {
+        let activity = activityIndicator()
+        activity.startAnimating()
+        
         guard let uid = FIRAuth.auth()?.currentUser?.uid else { return }
-        
-        let postRef = FIRDatabase.database().reference().child("posts").child(uid)
-        
-        postRef.queryOrdered(byChild: "creationDate").observe(.childAdded, with: {(snapshot) in
-            guard let dictionary = snapshot.value as? [String: Any] else { return }
-            let post = Post(dictionary: dictionary)
-            self.posts.append(post)
+        //FETCH USER
+        FIRDatabase.database().reference().child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
             
+            guard let dictionary = snapshot.value as? [String: Any] else { return }
+            self.user = User(dictionary: dictionary)
+            
+            self.navigationItem.title = self.user?.username
+            //FETCH POST
+            let postRef = FIRDatabase.database().reference().child("posts").child(uid)
+            postRef.queryOrdered(byChild: "creationDate").observe(.childAdded, with: {(snapshot) in
+                
+                guard let dictionary = snapshot.value as? [String: Any] else { return }
+                guard let user = self.user else { return }
+                let post = Post(user: user, dictionary: dictionary)
+                self.posts.insert(post, at: 0)
+                
+                self.collectionView?.reloadData()
+            }) { (err) in
+                print("Failed to fetch posts @UserProfile:", err)
+            }
+            
+            activity.stopAnimating()
             self.collectionView?.reloadData()
         }) { (err) in
-            print("Failed to fetch posts:", err)
+            print("Failed to fetch user: ", err)
+            activity.stopAnimating()
         }
     }
     
@@ -99,32 +115,12 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerId, for: indexPath) as! UserProfileHeader
         
-        header.user = user
+        header.user = self.user
         
         return header
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         return CGSize(width: view.frame.width, height: 200)
-    }
-    
-    fileprivate func fetchUser() {
-        let activity = activityIndicator()
-        activity.startAnimating()
-        
-        guard let uid = FIRAuth.auth()?.currentUser?.uid else { return }
-        FIRDatabase.database().reference().child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
-            
-            guard let dictionary = snapshot.value as? [String:Any] else { return }
-            
-            self.user = User(dictionary: dictionary)
-            
-            self.navigationItem.title = self.user?.username
-            self.collectionView?.reloadData()
-            activity.stopAnimating()
-        }) { (err) in
-            print("Failed to fetch user: ", err)
-            activity.stopAnimating()
-        }
     }
 }
