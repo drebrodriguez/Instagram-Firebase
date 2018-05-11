@@ -29,16 +29,23 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     fileprivate func fetchPost() {
         guard let uid = FIRAuth.auth()?.currentUser?.uid else { return }
         
-        let postRef = FIRDatabase.database().reference().child("posts").child(uid)
-        
-        postRef.queryOrdered(byChild: "creationDate").observe(.childAdded, with: {(snapshot) in
+        FIRDatabase.database().reference().child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
             guard let dictionary = snapshot.value as? [String: Any] else { return }
-            let post = Post(dictionary: dictionary)
-            self.posts.append(post)
+            let user = User(dictionary: dictionary)
             
-            self.collectionView?.reloadData()
+            let postRef = FIRDatabase.database().reference().child("posts").child(uid)
+            postRef.queryOrdered(byChild: "creationDate").observe(.childAdded, with: {(snapshot) in
+                guard let dictionary = snapshot.value as? [String: Any] else { return }
+                
+                let post = Post(user: user, dictionary: dictionary)
+                self.posts.insert(post, at: 0)
+                
+                self.collectionView?.reloadData()
+            }) { (err) in
+                print("Failed to fetch posts @Home:", err)
+            }
         }) { (err) in
-            print("Failed to fetch posts:", err)
+            print("Failed to fetch user @Home:", err)
         }
     }
     
