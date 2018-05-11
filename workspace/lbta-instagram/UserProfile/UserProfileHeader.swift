@@ -20,7 +20,7 @@ class UserProfileHeader: UICollectionViewCell {
         let iv = CustomImageView()
         iv.layer.cornerRadius = 80/2
         iv.layer.masksToBounds = true
-        iv.backgroundColor = UIColor(white: 0, alpha: 0.2)
+        iv.backgroundColor = UIColor(white: 0, alpha: 0.1)
         return iv
     }()
     
@@ -96,10 +96,10 @@ class UserProfileHeader: UICollectionViewCell {
         
         [profileImageView, usernameLabel, editProfileButton].forEach {addSubview($0)}
         
-        profileImageView.anchor(top: topAnchor, bottom: nil, left: leftAnchor, right: nil, paddingTop: 12, paddingBottom: 12, paddingLeft: 12, paddingRight: 12, width: 80, height: 80)
+        profileImageView.anchor(top: topAnchor, bottom: nil, left: leftAnchor, right: nil, paddingTop: 12, paddingBottom: 0, paddingLeft: 12, paddingRight: 0, width: 80, height: 80)
         
-        usernameLabel.anchor(top: profileImageView.bottomAnchor, bottom: nil, left: nil, right: nil, paddingTop: 12, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, width: 0, height: 0)
-        usernameLabel.anchorXYCenter(centerX: profileImageView.centerXAnchor, centerY: nil, width: 0, height: 0)
+        usernameLabel.anchor(top: profileImageView.bottomAnchor, bottom: nil, left: nil, right: nil, paddingTop: 16, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, width: 0, height: 0)
+        usernameLabel.anchorXYCenter(centerX: profileImageView.centerXAnchor, centerY: nil)
         
         setupUserStats()
         
@@ -130,7 +130,7 @@ class UserProfileHeader: UICollectionViewCell {
 
         stackview.anchor(top: nil, bottom: bottomAnchor, left: leftAnchor, right: rightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, width: 0, height: 50)
         
-        stackview.separatorLines(bgColor: .lightGray, height: 0.5)
+        stackview.separatorLines()
     }
     
     fileprivate func setupProfileImageAndUsername() {

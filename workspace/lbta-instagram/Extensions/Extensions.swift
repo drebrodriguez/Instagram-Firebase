@@ -42,7 +42,7 @@ extension UIView {
         }
     }
     
-    func anchorXYCenter(centerX: NSLayoutXAxisAnchor?, centerY: NSLayoutYAxisAnchor?, width: CGFloat, height: CGFloat) {
+    func anchorXYCenter(centerX: NSLayoutXAxisAnchor?, centerY: NSLayoutYAxisAnchor?, width: CGFloat = 0, height: CGFloat = 0) {
         translatesAutoresizingMaskIntoConstraints = false
         
         if let centerX = centerX {
@@ -59,13 +59,20 @@ extension UIView {
         }
     }
     
-    func separatorLines(bgColor: UIColor, height: CGFloat) {
+    func separatorLines(bgColor: UIColor = .lightGray, height: CGFloat = 0.5) {
         [self.topAnchor, self.bottomAnchor].forEach{(topAnchor) in
             let v = UIView()
             v.backgroundColor = bgColor
             self.addSubview(v)
             v.anchor(top: topAnchor, bottom: nil, left: leftAnchor, right: rightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, width: 0, height: height)
         }
+    }
+    
+    func separatorLineBottom(bgColor: UIColor = .lightGray, height: CGFloat = 0.5) {
+        let v = UIView()
+        v.backgroundColor = bgColor
+        self.addSubview(v)
+        v.anchor(top: nil, bottom: bottomAnchor, left: leftAnchor, right: rightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, width: 0, height: height)
     }
 }
 

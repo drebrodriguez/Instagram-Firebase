@@ -28,6 +28,9 @@
 		8A8D26EB209D83E200524671 /* PhotoSelectorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8D26EA209D83E200524671 /* PhotoSelectorCell.swift */; };
 		8A8D26ED209D96E900524671 /* PhotoSelectorHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8D26EC209D96E900524671 /* PhotoSelectorHeader.swift */; };
 		8A8D26EF209DBF5800524671 /* SharePhotoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8D26EE209DBF5800524671 /* SharePhotoController.swift */; };
+		8AA53D3220A5EFE90053FAEF /* FirebaseExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AA53D3120A5EFE90053FAEF /* FirebaseExtension.swift */; };
+		8AA53D3720A602790053FAEF /* SearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AA53D3620A602790053FAEF /* SearchController.swift */; };
+		8AA53D3920A60AB80053FAEF /* SearchUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AA53D3820A60AB80053FAEF /* SearchUserCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -53,6 +56,9 @@
 		8A8D26EA209D83E200524671 /* PhotoSelectorCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoSelectorCell.swift; sourceTree = "<group>"; };
 		8A8D26EC209D96E900524671 /* PhotoSelectorHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoSelectorHeader.swift; sourceTree = "<group>"; };
 		8A8D26EE209DBF5800524671 /* SharePhotoController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharePhotoController.swift; sourceTree = "<group>"; };
+		8AA53D3120A5EFE90053FAEF /* FirebaseExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseExtension.swift; sourceTree = "<group>"; };
+		8AA53D3620A602790053FAEF /* SearchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchController.swift; sourceTree = "<group>"; };
+		8AA53D3820A60AB80053FAEF /* SearchUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchUserCell.swift; sourceTree = "<group>"; };
 		A000E856576403AD76C91039 /* Pods-lbta-instagram.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-lbta-instagram.debug.xcconfig"; path = "Pods/Target Support Files/Pods-lbta-instagram/Pods-lbta-instagram.debug.xcconfig"; sourceTree = "<group>"; };
 		E3CE9E68914A73518BC71CFE /* Pods_lbta_instagram.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_lbta_instagram.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC5DFE7B973929CCA0172AF1 /* Pods-lbta-instagram.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-lbta-instagram.release.xcconfig"; path = "Pods/Target Support Files/Pods-lbta-instagram/Pods-lbta-instagram.release.xcconfig"; sourceTree = "<group>"; };
@@ -100,6 +106,7 @@
 		5A6162B220918B4800888B3B /* lbta-instagram */ = {
 			isa = PBXGroup;
 			children = (
+				8AA53D3320A602540053FAEF /* Search */,
 				8A7B5A2920A3E17D0028F953 /* Home */,
 				8A1BE21E209BF18400362E95 /* AddPhoto */,
 				8A1BE21B209AF5E400362E95 /* Login */,
@@ -168,6 +175,7 @@
 			children = (
 				8A5F5D3F2093371100DC45C0 /* Extensions.swift */,
 				8A7B5A2720A2DD680028F953 /* CustomImageView.swift */,
+				8AA53D3120A5EFE90053FAEF /* FirebaseExtension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -179,6 +187,15 @@
 				8A7B5A2C20A3E8350028F953 /* HomePostCell.swift */,
 			);
 			path = Home;
+			sourceTree = "<group>";
+		};
+		8AA53D3320A602540053FAEF /* Search */ = {
+			isa = PBXGroup;
+			children = (
+				8AA53D3620A602790053FAEF /* SearchController.swift */,
+				8AA53D3820A60AB80053FAEF /* SearchUserCell.swift */,
+			);
+			path = Search;
 			sourceTree = "<group>";
 		};
 		CD64AD5CB480F62CA6BD5A02 /* Frameworks */ = {
@@ -303,8 +320,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8AA53D3920A60AB80053FAEF /* SearchUserCell.swift in Sources */,
 				5A6162B620918B4900888B3B /* SignUpController.swift in Sources */,
 				8A7B5A2D20A3E8350028F953 /* HomePostCell.swift in Sources */,
+				8AA53D3720A602790053FAEF /* SearchController.swift in Sources */,
 				8A5F5D402093371100DC45C0 /* Extensions.swift in Sources */,
 				8A5280582097DDC4007FEB28 /* MainTabBarController.swift in Sources */,
 				8A1BE220209BF1A000362E95 /* PhotoSelectorController.swift in Sources */,
@@ -319,6 +338,7 @@
 				8A7B5A2B20A3E1910028F953 /* HomeController.swift in Sources */,
 				8A7B5A2620A2C19D0028F953 /* UserProfilePhotoCell.swift in Sources */,
 				8A5EE98020998D320075CD3D /* User.swift in Sources */,
+				8AA53D3220A5EFE90053FAEF /* FirebaseExtension.swift in Sources */,
 				8A8D26EB209D83E200524671 /* PhotoSelectorCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
