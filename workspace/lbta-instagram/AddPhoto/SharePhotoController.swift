@@ -79,7 +79,6 @@ class SharePhotoController: UIViewController {
             }
             //Success upload
             guard let imageUrl = metadata?.downloadURL()?.absoluteString else { return }
-            print("Successfully uploaded post image")
             
             self.saveToDatabaseWithImageUrl(imageUrl: imageUrl)
         }
@@ -100,7 +99,6 @@ class SharePhotoController: UIViewController {
                 return
             }
             //Success save
-            print("Successfully saved to DB")
             self.dismiss(animated: true, completion: self.activityIndicator().stopAnimating)
         }
     }
