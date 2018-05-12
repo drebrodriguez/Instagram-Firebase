@@ -10,6 +10,12 @@ import UIKit
 
 class SearchUserCell: UICollectionViewCell {
     
+    var user: User? {
+        didSet {
+            setupProfileImageAndUsername()
+        }
+    }
+    
     let photoImageView: CustomImageView = {
         let iv = CustomImageView()
         iv.backgroundColor = UIColor(white: 0, alpha: 0.1)
@@ -37,6 +43,13 @@ class SearchUserCell: UICollectionViewCell {
         usernameLabel.anchor(top: topAnchor, bottom: bottomAnchor, left: photoImageView.rightAnchor, right: rightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 8, paddingRight: 0, width: 0, height: 0)
         
         usernameLabel.separatorLineBottom()
+    }
+    
+    fileprivate func setupProfileImageAndUsername() {
+        usernameLabel.text = user?.username
+        
+        guard let profileImageUrl = user?.profileImageUrl else { return }
+        photoImageView.loadImageWithUrl(urlString: profileImageUrl)
     }
     
     required init?(coder aDecoder: NSCoder) {
