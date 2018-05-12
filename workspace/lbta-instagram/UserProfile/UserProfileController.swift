@@ -13,7 +13,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     
     let cellId = "cellId", headerId = "headerId"
     
-    var user: User?, posts = [Post]()
+    var user: User?, posts = [Post](), userUID: String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,7 +23,6 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         collectionView?.register(UserProfilePhotoCell.self, forCellWithReuseIdentifier: cellId)
         
         fetchUserAndPost()
-        
         setupLogOutButton()
     }
     
@@ -31,7 +30,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         let activity = activityIndicator()
         activity.startAnimating()
         
-        guard let uid = FIRAuth.auth()?.currentUser?.uid else { return }
+        guard let uid = userUID ?? FIRAuth.auth()?.currentUser?.uid else { return }
         //FETCH USER
         FIRDatabase.fetchUserWithUID(uid: uid) { (user) in
             self.user = user
@@ -40,9 +39,11 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
             FIRDatabase.fetchPostWithUser(user: user, completion: { (post) in
                 self.posts.insert(post, at: 0)
                 
-                activity.stopAnimating()
                 self.collectionView?.reloadData()
             })
+            
+            activity.stopAnimating()
+            self.collectionView?.reloadData()
         }
     }
     
