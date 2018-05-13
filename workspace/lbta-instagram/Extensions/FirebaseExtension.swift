@@ -35,3 +35,11 @@ extension FIRDatabase {
         }
     }
 }
+
+extension FIRAuth {
+    
+    static func fetchCurrentUserUID() -> String {
+        let uid = FIRAuth.auth()?.currentUser?.uid ?? ""
+        return uid
+    }
+}
