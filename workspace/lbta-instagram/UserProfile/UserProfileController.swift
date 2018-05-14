@@ -31,11 +31,13 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         activity.startAnimating()
         
         guard let uid = userUID ?? FIRAuth.auth()?.currentUser?.uid else { return }
-        //FETCH USER
+        
         FIRDatabase.fetchUserWithUID(uid: uid) { (user) in
             self.user = user
-            self.navigationItem.title = self.user?.username
-            //FETCH POSTS
+            if uid == FIRAuth.fetchCurrentUserUID() {
+                self.navigationItem.title = self.user?.username
+            }
+            
             FIRDatabase.fetchPostWithUser(user: user, completion: { (post) in
                 self.posts.insert(post, at: 0)
                 
