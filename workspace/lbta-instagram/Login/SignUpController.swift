@@ -81,7 +81,8 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
         [addPhotoButton, haveAccountButton].forEach {view.addSubview($0)}
         
         addPhotoButton.anchor(top: view.topAnchor, bottom: nil, left: nil, right: nil, paddingTop: 40, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, width: 140, height: 140)
-        addPhotoButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        addPhotoButton.anchorXYCenter(centerX: view.centerXAnchor, centerY: nil)
+//        addPhotoButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         
         haveAccountButton.anchor(top: nil, bottom: view.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, width: 0, height: 50)
         

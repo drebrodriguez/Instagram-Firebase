@@ -15,44 +15,87 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     var posts = [Post]()
     
+    let refreshControl: UIRefreshControl = {
+        let rc = UIRefreshControl()
+        rc.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
+        return rc
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: UserProfileHeader.updateFeedNotifName, object: nil)
         
         collectionView?.backgroundColor = .white
         collectionView?.register(HomePostCell.self, forCellWithReuseIdentifier: cellId)
         
         setupNavBarItems()
         
+        fetchAllPosts()
+        
+        collectionView?.refreshControl = refreshControl
+        }
+    
+    @objc fileprivate func handleRefresh() {
+        collectionView?.isUserInteractionEnabled = false
+        posts.removeAll()
+        fetchAllPosts()
+    }
+    
+    fileprivate func fetchAllPosts() {
         fetchPost()
+        fetchFollowingPost()
+    }
+    
+    fileprivate func fetchFollowingPost() {
+        let uid = FIRAuth.fetchCurrentUserUID()
+        FIRDatabase.database().reference().child("following").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+            guard let userIDDictionary = snapshot.value as? [String: Any] else {
+                self.collectionView?.reloadData()
+                self.collectionView?.refreshControl?.endRefreshing()
+                self.collectionView?.isUserInteractionEnabled = true
+                
+                return
+            }
+            
+            userIDDictionary.forEach({ (key, value) in
+                FIRDatabase.fetchUserWithUID(uid: key, completion: { (user) in
+                    FIRDatabase.fetchPostWithUser(user: user, completion: { (post) in
+                        self.posts.insert(post, at: 0)
+                        
+                        self.posts.sort(by: { (p1, p2) -> Bool in
+                            return p1.creationDate.compare(p2.creationDate) == .orderedDescending
+                        })
+                        
+                        self.collectionView?.reloadData()
+                    })
+                })
+            })
+            
+            self.collectionView?.refreshControl?.endRefreshing()
+            self.collectionView?.isUserInteractionEnabled = true
+        }) { (err) in
+            print("Failed to fetch following UIDs:", err)
+        }
     }
     
     fileprivate func fetchPost() {
         guard let uid = FIRAuth.auth()?.currentUser?.uid else { return }
         
-        FIRDatabase.database().reference().child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
-            guard let dictionary = snapshot.value as? [String: Any] else { return }
-            let user = User(dictionary: dictionary)
-            
-            let postRef = FIRDatabase.database().reference().child("posts").child(uid)
-            postRef.queryOrdered(byChild: "creationDate").observe(.childAdded, with: {(snapshot) in
-                guard let dictionary = snapshot.value as? [String: Any] else { return }
-                
-                let post = Post(user: user, dictionary: dictionary)
+        FIRDatabase.fetchUserWithUID(uid: uid) { (user) in
+            FIRDatabase.fetchPostWithUser(user: user, completion: { (post) in
                 self.posts.insert(post, at: 0)
-                
                 self.collectionView?.reloadData()
-            }) { (err) in
-                print("Failed to fetch posts @Home:", err)
-            }
-        }) { (err) in
-            print("Failed to fetch user @Home:", err)
+            })
         }
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! HomePostCell
         
-        cell.post = posts[indexPath.item]
+        if indexPath.item < posts.count {
+            cell.post = posts[indexPath.item]
+        }
         
         return cell
     }

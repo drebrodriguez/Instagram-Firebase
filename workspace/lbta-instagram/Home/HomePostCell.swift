@@ -21,7 +21,7 @@ class HomePostCell: UICollectionViewCell {
         let iv = CustomImageView()
         iv.contentMode = .scaleAspectFill
         iv.clipsToBounds = true
-        iv.backgroundColor = UIColor(white: 0, alpha: 0.2)
+        iv.backgroundColor = UIColor(white: 0, alpha: 0.1)
         iv.layer.cornerRadius = 40/2
         return iv
     }()
@@ -44,7 +44,7 @@ class HomePostCell: UICollectionViewCell {
         let iv = CustomImageView()
         iv.contentMode = .scaleAspectFill
         iv.clipsToBounds = true
-        iv.backgroundColor = UIColor(white: 0, alpha: 0.2)
+        iv.backgroundColor = UIColor(white: 0, alpha: 0.1)
         return iv
     }()
     
@@ -86,7 +86,7 @@ class HomePostCell: UICollectionViewCell {
         userProfileImage.anchor(top: topAnchor, bottom: nil, left: leftAnchor, right: nil, paddingTop: 8, paddingBottom: 0, paddingLeft: 8, paddingRight: 0, width: 40, height: 40)
         
         usernameLabel.anchor(top: nil, bottom: nil, left: userProfileImage.rightAnchor, right: optionButton.leftAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 8, paddingRight: 0, width: 0, height: 0)
-        usernameLabel.anchorXYCenter(centerX: nil, centerY: userProfileImage.centerYAnchor, width: 0, height: 0)
+        usernameLabel.anchorXYCenter(centerX: nil, centerY: userProfileImage.centerYAnchor)
         
         optionButton.anchor(top: topAnchor, bottom: nil, left: nil, right: rightAnchor, paddingTop: 12, paddingBottom: 0, paddingLeft: 0, paddingRight: 8, width: 50, height: 0)
         
@@ -127,7 +127,9 @@ class HomePostCell: UICollectionViewCell {
         let attributedText = NSMutableAttributedString(string: post.user.username, attributes: [NSAttributedStringKey.font:UIFont.boldSystemFont(ofSize: 14)])
         attributedText.append(NSAttributedString(string: " \(post.caption)", attributes: [NSAttributedStringKey.font:UIFont.systemFont(ofSize: 14)]))
         attributedText.append(NSAttributedString(string: "\n\n", attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 4)]))
-        attributedText.append(NSAttributedString(string: "1 week ago", attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 14), NSAttributedStringKey.foregroundColor: UIColor.gray]))
+        
+        let timeAgoDisplay = post.creationDate.timeAgoDisplay()
+        attributedText.append(NSAttributedString(string: timeAgoDisplay, attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 14), NSAttributedStringKey.foregroundColor: UIColor.gray]))
 
         captionLabel.attributedText = attributedText
     }

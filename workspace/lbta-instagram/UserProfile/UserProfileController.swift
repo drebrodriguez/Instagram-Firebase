@@ -13,7 +13,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     
     let cellId = "cellId", headerId = "headerId"
     
-    var user: User?, posts = [Post]()
+    var user: User?, posts = [Post](), userUID: String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,7 +23,6 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         collectionView?.register(UserProfilePhotoCell.self, forCellWithReuseIdentifier: cellId)
         
         fetchUserAndPost()
-        
         setupLogOutButton()
     }
     
@@ -31,33 +30,22 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         let activity = activityIndicator()
         activity.startAnimating()
         
-        guard let uid = FIRAuth.auth()?.currentUser?.uid else { return }
-        //FETCH USER
-        FIRDatabase.database().reference().child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+        guard let uid = userUID ?? FIRAuth.auth()?.currentUser?.uid else { return }
+        
+        FIRDatabase.fetchUserWithUID(uid: uid) { (user) in
+            self.user = user
+            if uid == FIRAuth.fetchCurrentUserUID() {
+                self.navigationItem.title = self.user?.username
+            }
             
-            guard let dictionary = snapshot.value as? [String: Any] else { return }
-            self.user = User(dictionary: dictionary)
-            
-            self.navigationItem.title = self.user?.username
-            //FETCH POST
-            let postRef = FIRDatabase.database().reference().child("posts").child(uid)
-            postRef.queryOrdered(byChild: "creationDate").observe(.childAdded, with: {(snapshot) in
-                
-                guard let dictionary = snapshot.value as? [String: Any] else { return }
-                guard let user = self.user else { return }
-                let post = Post(user: user, dictionary: dictionary)
+            FIRDatabase.fetchPostWithUser(user: user, completion: { (post) in
                 self.posts.insert(post, at: 0)
                 
                 self.collectionView?.reloadData()
-            }) { (err) in
-                print("Failed to fetch posts @UserProfile:", err)
-            }
+            })
             
             activity.stopAnimating()
             self.collectionView?.reloadData()
-        }) { (err) in
-            print("Failed to fetch user: ", err)
-            activity.stopAnimating()
         }
     }
     
