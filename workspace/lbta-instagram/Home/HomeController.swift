@@ -128,7 +128,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     
     @objc func handleCamera() {
-        print("camera selected")
+        present(CameraController(), animated: true, completion: nil)
     }
     
     @objc func handleSend() {
