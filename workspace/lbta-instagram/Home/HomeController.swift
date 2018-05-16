@@ -61,7 +61,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
             userIDDictionary.forEach({ (key, value) in
                 FIRDatabase.fetchUserWithUID(uid: key, completion: { (user) in
                     FIRDatabase.fetchPostWithUser(user: user, completion: { (post) in
-                        self.posts.insert(post, at: 0)
+                        self.posts.append(post)
                         
                         self.posts.sort(by: { (p1, p2) -> Bool in
                             return p1.creationDate.compare(p2.creationDate) == .orderedDescending
