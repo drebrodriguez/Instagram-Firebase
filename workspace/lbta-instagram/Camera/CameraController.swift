@@ -9,7 +9,7 @@
 import UIKit
 import AVFoundation
 
-class CameraController: UIViewController, AVCapturePhotoCaptureDelegate {
+class CameraController: UIViewController, AVCapturePhotoCaptureDelegate, UIViewControllerTransitioningDelegate {
     
     let output = AVCapturePhotoOutput()
     
@@ -27,30 +27,32 @@ class CameraController: UIViewController, AVCapturePhotoCaptureDelegate {
         return btn
     }()
     
-    let cancelButton: UIButton = {
-        let btn = UIButton(type: .system)
-        btn.setImage(#imageLiteral(resourceName: "cancel_shadow").withRenderingMode(.alwaysOriginal), for: .normal)
-        btn.addTarget(self, action: #selector(handleCancel), for: .touchUpInside)
-        return btn
-    }()
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        transitioningDelegate = self
+        
         setupCaptureSession()
         setupHUD()
+    }
+    
+    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        return CustomAnimationPresentor()
+    }
+    
+    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        return CustomAnimationDismisser()
+    }
+    
+    override var prefersStatusBarHidden: Bool {
+        return true
     }
     
     @objc fileprivate func handleDismiss() {
         dismiss(animated: true, completion: nil)
     }
     
-    @objc fileprivate func handleCancel() {
-        dismiss(animated: true, completion: nil)
-    }
-    
     @objc fileprivate func handleCapture() {
-//        print("Capturing photo...")
         let photoSettings = AVCapturePhotoSettings()
         
         guard let previewFormatType = photoSettings.availablePreviewPhotoPixelFormatTypes.first else { return }
@@ -63,13 +65,11 @@ class CameraController: UIViewController, AVCapturePhotoCaptureDelegate {
         guard let imageData = photo.fileDataRepresentation() else { return }
         let previewImage = UIImage(data: imageData)
         
-        let previewImageView = UIImageView(image: previewImage)
+        let containerView = PreviewPhotoContainerView()
+        containerView.previewImageView.image = previewImage
         
-        view.addSubview(previewImageView)
-        previewImageView.anchor(top: view.topAnchor, bottom: view.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, width: 0, height: 0)
-        
-        previewImageView.addSubview(cancelButton)
-        cancelButton.anchor(top: previewImageView.topAnchor, bottom: nil, left: nil, right: previewImageView.rightAnchor, paddingTop: 12, paddingBottom: 0, paddingLeft: 0, paddingRight: 12, width: 50, height: 50)
+        view.addSubview(containerView)
+        containerView.anchor(top: view.topAnchor, bottom: view.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, width: 0, height: 0)
     }
     
     fileprivate func setupCaptureSession() {
