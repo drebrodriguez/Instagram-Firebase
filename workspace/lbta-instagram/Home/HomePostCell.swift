@@ -8,7 +8,13 @@
 
 import UIKit
 
+protocol HomePostCellDelegate {
+    func didTapComment(post: Post)
+}
+
 class HomePostCell: UICollectionViewCell {
+    
+    var delegate: HomePostCellDelegate?
     
     var post: Post? {
         didSet {
@@ -54,9 +60,10 @@ class HomePostCell: UICollectionViewCell {
         return btn
     }()
     
-    let commentButton: UIButton = {
+    lazy var commentButton: UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(#imageLiteral(resourceName: "comment").withRenderingMode(.alwaysOriginal), for: .normal)
+        btn.addTarget(self, action: #selector(handleComment), for: .touchUpInside)
         return btn
     }()
     
@@ -80,6 +87,8 @@ class HomePostCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        
+        backgroundColor = .white
         
         [userProfileImage, usernameLabel, optionButton, photoImageView, captionLabel].forEach({addSubview($0)})
         
@@ -132,6 +141,11 @@ class HomePostCell: UICollectionViewCell {
         attributedText.append(NSAttributedString(string: timeAgoDisplay, attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 14), NSAttributedStringKey.foregroundColor: UIColor.gray]))
 
         captionLabel.attributedText = attributedText
+    }
+    
+    @objc fileprivate func handleComment() {
+        guard let post = self.post else { return }
+        delegate?.didTapComment(post: post)
     }
     
     required init?(coder aDecoder: NSCoder) {
