@@ -28,9 +28,6 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         
         collectionView?.backgroundColor = .white
         collectionView?.register(HomePostCell.self, forCellWithReuseIdentifier: cellId)
-//        if let flowLayout = collectionView?.collectionViewLayout as? UICollectionViewFlowLayout {
-//            flowLayout.estimatedItemSize = CGSize(width: 1, height: 1)
-//        }
         collectionView?.refreshControl = refreshControl
         
         setupNavBarItems()
@@ -56,7 +53,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     fileprivate func fetchFollowingPost() {
         let uid = FIRAuth.fetchCurrentUserUID()
         FIRDatabase.database().reference().child("following").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
-            guard let userIDDictionary = snapshot.value as? [String: Any] else {
+            guard let userIdDictionary = snapshot.value as? [String: Any] else {
                 self.collectionView?.reloadData()
                 self.collectionView?.refreshControl?.endRefreshing()
                 self.collectionView?.isUserInteractionEnabled = true
@@ -64,7 +61,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
                 return
             }
             
-            userIDDictionary.forEach({ (key, value) in
+            userIdDictionary.forEach({ (key, value) in
                 FIRDatabase.fetchUserWithUID(uid: key, completion: { (user) in
                     FIRDatabase.fetchPostWithUser(user: user, completion: { (post) in
                         self.posts.append(post)
@@ -144,8 +141,11 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     
     func didTapComment(post: Post) {
-        print(post.user.username, post.caption)
+        print("username: " + post.user.username, "\ncaption: " + post.caption, "\npost ID: \(post.id ?? "")")
+        
         let commentsController = CommentsController(collectionViewLayout: UICollectionViewFlowLayout())
+        commentsController.post = post
+        
         navigationController?.pushViewController(commentsController, animated: true)
     }
     

@@ -7,8 +7,12 @@
 //
 
 import UIKit
+import Firebase
 
 class CommentsController: UICollectionViewController {
+    
+    var post: Post?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -43,22 +47,35 @@ class CommentsController: UICollectionViewController {
         submitButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
         submitButton.addTarget(self, action: #selector(handleSubmit), for: .touchUpInside)
         
-        let textField = UITextField()
-        textField.placeholder = "Enter Comment"
-        textField.font = UIFont.systemFont(ofSize: 14)
-//        textField.backgroundColor = UIColor(white: 0, alpha: 0.03)
-//        textField.layer.cornerRadius = 5
-//        textField.layer.masksToBounds = true
-        
-        [submitButton, textField].forEach({containerView.addSubview($0)})
+        [submitButton, commentTextField].forEach({containerView.addSubview($0)})
         submitButton.anchor(top: containerView.topAnchor, bottom: containerView.bottomAnchor, left: nil, right: containerView.rightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 8, width: 50, height: 0)
-        textField.anchor(top: containerView.topAnchor, bottom: containerView.bottomAnchor, left: containerView.leftAnchor, right: submitButton.leftAnchor, paddingTop: 8, paddingBottom: 8, paddingLeft: 8, paddingRight: 8, width: 0, height: 0)
+        commentTextField.anchor(top: containerView.topAnchor, bottom: containerView.bottomAnchor, left: containerView.leftAnchor, right: submitButton.leftAnchor, paddingTop: 8, paddingBottom: 8, paddingLeft: 12, paddingRight: 0, width: 0, height: 0)
         
         return containerView
     }()
     
+    let commentTextField: UITextField = {
+        let textField = UITextField()
+        textField.placeholder = "Enter Comment"
+        textField.font = UIFont.systemFont(ofSize: 14)
+        //        textField.backgroundColor = UIColor(white: 0, alpha: 0.03)
+        //        textField.layer.cornerRadius = 5
+        //        textField.layer.masksToBounds = true
+        return textField
+    }()
+    
     @objc fileprivate func handleSubmit() {
-        print("handle submit button")
+        let uid = FIRAuth.fetchCurrentUserUID()
+        let postId = self.post?.id ?? ""
+        let values = ["uid": uid, "text": commentTextField.text ?? "", "creationDate": Date().timeIntervalSince1970] as [String : Any]
+        FIRDatabase.database().reference().child("comments").child(postId).childByAutoId().updateChildValues(values) { (err, ref) in
+            if let error = err {
+                print("Failed to save comment to DB:", error)
+            }
+            
+            print("Successfully saved comment to DB.")
+            self.commentTextField.text = ""
+        }
     }
     
     override var inputAccessoryView: UIView? {
