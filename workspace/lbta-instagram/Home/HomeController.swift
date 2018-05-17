@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 
-class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
+class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLayout, HomePostCellDelegate {
     
     let cellId = "cellId"
     
@@ -28,13 +28,19 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         
         collectionView?.backgroundColor = .white
         collectionView?.register(HomePostCell.self, forCellWithReuseIdentifier: cellId)
+//        if let flowLayout = collectionView?.collectionViewLayout as? UICollectionViewFlowLayout {
+//            flowLayout.estimatedItemSize = CGSize(width: 1, height: 1)
+//        }
+        collectionView?.refreshControl = refreshControl
         
         setupNavBarItems()
         
         fetchAllPosts()
-        
-        collectionView?.refreshControl = refreshControl
         }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 2
+    }
     
     @objc fileprivate func handleRefresh() {
         collectionView?.isUserInteractionEnabled = false
@@ -97,6 +103,8 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
             cell.post = posts[indexPath.item]
         }
         
+        cell.delegate = self
+        
         return cell
     }
     
@@ -133,6 +141,12 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     @objc func handleSend() {
         print("send selected")
+    }
+    
+    func didTapComment(post: Post) {
+        print(post.user.username, post.caption)
+        let commentsController = CommentsController(collectionViewLayout: UICollectionViewFlowLayout())
+        navigationController?.pushViewController(commentsController, animated: true)
     }
     
 }
