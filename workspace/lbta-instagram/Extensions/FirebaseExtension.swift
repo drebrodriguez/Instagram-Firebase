@@ -25,9 +25,10 @@ extension FIRDatabase {
     static func fetchPostWithUser(user: User, completion: @escaping (Post) -> ()) {
         let postRef = FIRDatabase.database().reference().child("posts").child(user.uid)
         postRef.queryOrdered(byChild: "creationDate").observe(.childAdded, with: {(snapshot) in
-            guard let dictionary = snapshot.value as? [String: Any] else { return }
             
-            let post = Post(user: user, dictionary: dictionary)
+            guard let dictionary = snapshot.value as? [String: Any] else { return }
+            var post = Post(user: user, dictionary: dictionary)
+            post.id = snapshot.key
             
             completion(post)
         }) { (err) in
