@@ -161,7 +161,7 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
         let activity = activityIndicator()
         activity.startAnimating()
         
-        FIRAuth.auth()?.createUser(withEmail: email, password: password, completion: { (user: FIRUser?, err: Error?) in
+        Auth.auth().createUser(withEmail: email, password: password, completion: { (user, err) in
             if let error = err {
                 print("Error: ", error)
                 activity.stopAnimating()
@@ -175,34 +175,39 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
             
             //set UID to profile image
             let filename = NSUUID().uuidString
-            
-            FIRStorage.storage().reference().child("profile_images").child(filename).put(uploadData, metadata: nil, completion: { (metadata, err) in
+            let storageRef = Storage.storage().reference().child("profile_images").child(filename)
+                
+            storageRef.putData(uploadData, metadata: nil, completion: { (metadata, err) in
                 if let error = err {
                     print("Failed to upload profile image: ", error)
                     return
                 }
                 
-                guard let profileImageUrl = metadata?.downloadURL()?.absoluteString else { return }
-                print("Successfully uploaded profile image.")
-                
-                //
-                guard let uid = user?.uid else { return }
-                
-                let dictionaryValues = ["username":username, "profileImageUrl":profileImageUrl]
-                let values = [uid:dictionaryValues]
-                
-                FIRDatabase.database().reference().child("users").updateChildValues(values, withCompletionBlock: { (err, ref) in
-                    if let error = err {
-                        print("Failed to save user to DB: ", error)
-                        return
-                    }
-                    print("Successfully saved user to DB.")
+                storageRef.downloadURL(completion: { (url, err) in
+                        if let error = err {
+                            print("Failed to download imageUrl:", error)
+                            return
+                        }
+                        
+                    guard let profileImageUrl = url?.absoluteString else { return }
+                    guard let uid = user?.user.uid else { return }
                     
-                    guard let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController else { return }
-                    mainTabBarController.setupViewControllers()
+                    let dictionaryValues = ["username":username, "profileImageUrl": profileImageUrl]
+                    let values = [uid:dictionaryValues]
                     
-                    self.dismiss(animated: true, completion: activity.stopAnimating)
-                })
+                        Database.database().reference().child("users").updateChildValues(values, withCompletionBlock: { (err, ref) in
+                            if let error = err {
+                                print("Failed to save user to DB: ", error)
+                                return
+                            }
+                            print("Successfully saved user to DB.")
+                            
+                            guard let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController else { return }
+                            mainTabBarController.setupViewControllers()
+                            
+                            self.dismiss(animated: true, completion: activity.stopAnimating)
+                        })
+                    })
             })
         })
     }

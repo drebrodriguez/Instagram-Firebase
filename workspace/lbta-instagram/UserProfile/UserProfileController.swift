@@ -30,15 +30,15 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         let activity = activityIndicator()
         activity.startAnimating()
         
-        guard let uid = userUID ?? FIRAuth.auth()?.currentUser?.uid else { return }
+        guard let uid = userUID ?? Auth.auth().currentUser?.uid else { return }
         
-        FIRDatabase.fetchUserWithUID(uid: uid) { (user) in
+        Database.fetchUserWithUID(uid: uid) { (user) in
             self.user = user
-            if uid == FIRAuth.fetchCurrentUserUID() {
+            if uid == Auth.fetchCurrentUserUID() {
                 self.navigationItem.title = self.user?.username
             }
             
-            FIRDatabase.fetchPostWithUser(user: user, completion: { (post) in
+            Database.fetchPostWithUser(user: user, completion: { (post) in
                 self.posts.insert(post, at: 0)
                 
                 self.collectionView?.reloadData()
@@ -58,7 +58,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         let logout = UIAlertAction(title: "Log Out", style: .destructive) { (_) in
             
             do {
-                try FIRAuth.auth()?.signOut()
+                try Auth.auth().signOut()
                 
                 let navController = UINavigationController(rootViewController: LoginController())
                 self.present(navController, animated: true, completion: nil)

@@ -131,7 +131,7 @@ class LoginController: UIViewController {
         let activity = activityIndicator()
         activity.startAnimating()
         
-        FIRAuth.auth()?.signIn(withEmail: email, password: password, completion: { (user, err) in
+        Auth.auth().signIn(withEmail: email, password: password, completion: { (user, err) in
             if let err = err {
                 print("Failed to sign in: ", err)
                 activity.stopAnimating()

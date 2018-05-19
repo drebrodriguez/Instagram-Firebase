@@ -51,8 +51,8 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     
     fileprivate func fetchFollowingPost() {
-        let uid = FIRAuth.fetchCurrentUserUID()
-        FIRDatabase.database().reference().child("following").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+        let uid = Auth.fetchCurrentUserUID()
+        Database.database().reference().child("following").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
             guard let userIdDictionary = snapshot.value as? [String: Any] else {
                 self.collectionView?.reloadData()
                 self.collectionView?.refreshControl?.endRefreshing()
@@ -62,8 +62,8 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
             }
             
             userIdDictionary.forEach({ (key, value) in
-                FIRDatabase.fetchUserWithUID(uid: key, completion: { (user) in
-                    FIRDatabase.fetchPostWithUser(user: user, completion: { (post) in
+                Database.fetchUserWithUID(uid: key, completion: { (user) in
+                    Database.fetchPostWithUser(user: user, completion: { (post) in
                         self.posts.append(post)
                         
                         self.posts.sort(by: { (p1, p2) -> Bool in
@@ -83,10 +83,10 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     
     fileprivate func fetchPost() {
-        guard let uid = FIRAuth.auth()?.currentUser?.uid else { return }
+        guard let uid = Auth.auth().currentUser?.uid else { return }
         
-        FIRDatabase.fetchUserWithUID(uid: uid) { (user) in
-            FIRDatabase.fetchPostWithUser(user: user, completion: { (post) in
+        Database.fetchUserWithUID(uid: uid) { (user) in
+            Database.fetchPostWithUser(user: user, completion: { (post) in
                 self.posts.insert(post, at: 0)
                 self.collectionView?.reloadData()
             })

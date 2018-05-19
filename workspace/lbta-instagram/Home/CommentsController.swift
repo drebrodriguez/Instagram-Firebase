@@ -65,10 +65,10 @@ class CommentsController: UICollectionViewController {
     }()
     
     @objc fileprivate func handleSubmit() {
-        let uid = FIRAuth.fetchCurrentUserUID()
+        let uid = Auth.fetchCurrentUserUID()
         let postId = self.post?.id ?? ""
         let values = ["uid": uid, "text": commentTextField.text ?? "", "creationDate": Date().timeIntervalSince1970] as [String : Any]
-        FIRDatabase.database().reference().child("comments").child(postId).childByAutoId().updateChildValues(values) { (err, ref) in
+        Database.database().reference().child("comments").child(postId).childByAutoId().updateChildValues(values) { (err, ref) in
             if let error = err {
                 print("Failed to save comment to DB:", error)
             }
