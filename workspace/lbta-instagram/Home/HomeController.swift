@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 
-class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
+class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLayout, HomePostCellDelegate {
     
     let cellId = "cellId"
     
@@ -28,13 +28,16 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         
         collectionView?.backgroundColor = .white
         collectionView?.register(HomePostCell.self, forCellWithReuseIdentifier: cellId)
+        collectionView?.refreshControl = refreshControl
         
         setupNavBarItems()
         
         fetchAllPosts()
-        
-        collectionView?.refreshControl = refreshControl
         }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 2
+    }
     
     @objc fileprivate func handleRefresh() {
         collectionView?.isUserInteractionEnabled = false
@@ -48,9 +51,9 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     
     fileprivate func fetchFollowingPost() {
-        let uid = FIRAuth.fetchCurrentUserUID()
-        FIRDatabase.database().reference().child("following").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
-            guard let userIDDictionary = snapshot.value as? [String: Any] else {
+        let uid = Auth.fetchCurrentUserUID()
+        Database.database().reference().child("following").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+            guard let userIdDictionary = snapshot.value as? [String: Any] else {
                 self.collectionView?.reloadData()
                 self.collectionView?.refreshControl?.endRefreshing()
                 self.collectionView?.isUserInteractionEnabled = true
@@ -58,9 +61,9 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
                 return
             }
             
-            userIDDictionary.forEach({ (key, value) in
-                FIRDatabase.fetchUserWithUID(uid: key, completion: { (user) in
-                    FIRDatabase.fetchPostWithUser(user: user, completion: { (post) in
+            userIdDictionary.forEach({ (key, value) in
+                Database.fetchUserWithUID(uid: key, completion: { (user) in
+                    Database.fetchPostWithUser(user: user, completion: { (post) in
                         self.posts.append(post)
                         
                         self.posts.sort(by: { (p1, p2) -> Bool in
@@ -80,10 +83,10 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     
     fileprivate func fetchPost() {
-        guard let uid = FIRAuth.auth()?.currentUser?.uid else { return }
+        guard let uid = Auth.auth().currentUser?.uid else { return }
         
-        FIRDatabase.fetchUserWithUID(uid: uid) { (user) in
-            FIRDatabase.fetchPostWithUser(user: user, completion: { (post) in
+        Database.fetchUserWithUID(uid: uid) { (user) in
+            Database.fetchPostWithUser(user: user, completion: { (post) in
                 self.posts.insert(post, at: 0)
                 self.collectionView?.reloadData()
             })
@@ -96,6 +99,8 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         if indexPath.item < posts.count {
             cell.post = posts[indexPath.item]
         }
+        
+        cell.delegate = self
         
         return cell
     }
@@ -133,6 +138,15 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     @objc func handleSend() {
         print("send selected")
+    }
+    
+    func didTapComment(post: Post) {
+        print("username: " + post.user.username, "\ncaption: " + post.caption, "\npost ID: \(post.id ?? "")")
+        
+        let commentsController = CommentsController(collectionViewLayout: UICollectionViewFlowLayout())
+        commentsController.post = post
+        
+        navigationController?.pushViewController(commentsController, animated: true)
     }
     
 }

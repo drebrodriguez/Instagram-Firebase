@@ -36,6 +36,9 @@
 		8AA53D3720A602790053FAEF /* SearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AA53D3620A602790053FAEF /* SearchController.swift */; };
 		8AA53D3920A60AB80053FAEF /* SearchUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AA53D3820A60AB80053FAEF /* SearchUserCell.swift */; };
 		8AB4D2DF20AC2A0100A32531 /* CustomAnimationDismisser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB4D2DE20AC2A0100A32531 /* CustomAnimationDismisser.swift */; };
+		8AB4D2E120AD395900A32531 /* CommentsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB4D2E020AD395900A32531 /* CommentsController.swift */; };
+		8AFEB7B020B08850007F1096 /* CommentsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFEB7AF20B08850007F1096 /* CommentsCell.swift */; };
+		8AFEB7B220B08C50007F1096 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFEB7B120B08C50007F1096 /* Comment.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -69,6 +72,9 @@
 		8AA53D3620A602790053FAEF /* SearchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchController.swift; sourceTree = "<group>"; };
 		8AA53D3820A60AB80053FAEF /* SearchUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchUserCell.swift; sourceTree = "<group>"; };
 		8AB4D2DE20AC2A0100A32531 /* CustomAnimationDismisser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAnimationDismisser.swift; sourceTree = "<group>"; };
+		8AB4D2E020AD395900A32531 /* CommentsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsController.swift; sourceTree = "<group>"; };
+		8AFEB7AF20B08850007F1096 /* CommentsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsCell.swift; sourceTree = "<group>"; };
+		8AFEB7B120B08C50007F1096 /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
 		A000E856576403AD76C91039 /* Pods-lbta-instagram.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-lbta-instagram.debug.xcconfig"; path = "Pods/Target Support Files/Pods-lbta-instagram/Pods-lbta-instagram.debug.xcconfig"; sourceTree = "<group>"; };
 		E3CE9E68914A73518BC71CFE /* Pods_lbta_instagram.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_lbta_instagram.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC5DFE7B973929CCA0172AF1 /* Pods-lbta-instagram.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-lbta-instagram.release.xcconfig"; path = "Pods/Target Support Files/Pods-lbta-instagram/Pods-lbta-instagram.release.xcconfig"; sourceTree = "<group>"; };
@@ -117,16 +123,16 @@
 			isa = PBXGroup;
 			children = (
 				8A79DCBC20A9C3BB007AD0F0 /* Camera */,
-				8AA53D3320A602540053FAEF /* Search */,
 				8A7B5A2920A3E17D0028F953 /* Home */,
+				8AA53D3320A602540053FAEF /* Search */,
 				8A1BE21E209BF18400362E95 /* AddPhoto */,
+				8A5EE97B2099842A0075CD3D /* UserProfile */,
 				8A1BE21B209AF5E400362E95 /* Login */,
 				8A5EE97E20998D1F0075CD3D /* Models */,
-				8A5EE97B2099842A0075CD3D /* UserProfile */,
-				5A6162B320918B4800888B3B /* AppDelegate.swift */,
-				8A5280572097DDC4007FEB28 /* MainTabBarController.swift */,
 				8A5F5D3E209336CE00DC45C0 /* Extensions */,
 				8A1BE21A209ABC3000362E95 /* Resources */,
+				8A5280572097DDC4007FEB28 /* MainTabBarController.swift */,
+				5A6162B320918B4800888B3B /* AppDelegate.swift */,
 				5A6162BF20918B4A00888B3B /* Info.plist */,
 				8A5F5D4120943A7900DC45C0 /* GoogleService-Info.plist */,
 			);
@@ -177,6 +183,7 @@
 			children = (
 				8A5EE97F20998D320075CD3D /* User.swift */,
 				8A7B5A2320A2AC6C0028F953 /* Post.swift */,
+				8AFEB7B120B08C50007F1096 /* Comment.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -208,6 +215,8 @@
 			children = (
 				8A7B5A2A20A3E1910028F953 /* HomeController.swift */,
 				8A7B5A2C20A3E8350028F953 /* HomePostCell.swift */,
+				8AB4D2E020AD395900A32531 /* CommentsController.swift */,
+				8AFEB7AF20B08850007F1096 /* CommentsCell.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -325,11 +334,15 @@
 				"${SRCROOT}/Pods/Target Support Files/Pods-lbta-instagram/Pods-lbta-instagram-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
+				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
+				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -344,10 +357,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				8AA53D3920A60AB80053FAEF /* SearchUserCell.swift in Sources */,
+				8AFEB7B020B08850007F1096 /* CommentsCell.swift in Sources */,
 				8A6A0FEF20A83DF300D702F2 /* DateExtension.swift in Sources */,
+				8AFEB7B220B08C50007F1096 /* Comment.swift in Sources */,
 				8AB4D2DF20AC2A0100A32531 /* CustomAnimationDismisser.swift in Sources */,
 				5A6162B620918B4900888B3B /* SignUpController.swift in Sources */,
 				8A7B5A2D20A3E8350028F953 /* HomePostCell.swift in Sources */,
+				8AB4D2E120AD395900A32531 /* CommentsController.swift in Sources */,
 				8AA53D3720A602790053FAEF /* SearchController.swift in Sources */,
 				8A5F5D402093371100DC45C0 /* Extensions.swift in Sources */,
 				8A79DCBE20A9C3DB007AD0F0 /* CameraController.swift in Sources */,

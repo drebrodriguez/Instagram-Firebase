@@ -9,10 +9,10 @@
 import Foundation
 import Firebase
 
-extension FIRDatabase {
+extension Database {
     
     static func fetchUserWithUID(uid: String, completion: @escaping (User) -> ()) {
-        FIRDatabase.database().reference().child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+        Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
             guard let dictionary = snapshot.value as? [String: Any] else { return }
             let user = User(uid: uid, dictionary: dictionary)
             
@@ -23,11 +23,12 @@ extension FIRDatabase {
     }
     
     static func fetchPostWithUser(user: User, completion: @escaping (Post) -> ()) {
-        let postRef = FIRDatabase.database().reference().child("posts").child(user.uid)
+        let postRef = Database.database().reference().child("posts").child(user.uid)
         postRef.queryOrdered(byChild: "creationDate").observe(.childAdded, with: {(snapshot) in
-            guard let dictionary = snapshot.value as? [String: Any] else { return }
             
-            let post = Post(user: user, dictionary: dictionary)
+            guard let dictionary = snapshot.value as? [String: Any] else { return }
+            var post = Post(user: user, dictionary: dictionary)
+            post.id = snapshot.key
             
             completion(post)
         }) { (err) in
@@ -36,10 +37,10 @@ extension FIRDatabase {
     }
 }
 
-extension FIRAuth {
+extension Auth {
     
     static func fetchCurrentUserUID() -> String {
-        let uid = FIRAuth.auth()?.currentUser?.uid ?? ""
+        let uid = Auth.auth().currentUser?.uid ?? ""
         return uid
     }
 }

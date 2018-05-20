@@ -68,12 +68,12 @@ class SearchController: UICollectionViewController, UICollectionViewDelegateFlow
     }
     
     fileprivate func fetchUsers() {
-        FIRDatabase.database().reference().child("users").observeSingleEvent(of: .value, with: { (snapshot) in
+        Database.database().reference().child("users").observeSingleEvent(of: .value, with: { (snapshot) in
             guard let dictionaries = snapshot.value as? [String: Any] else { return }
             
             dictionaries.forEach({ (key, value) in
                 
-                if key == FIRAuth.auth()?.currentUser?.uid { return }
+                if key == Auth.auth().currentUser?.uid { return }
                 
                 guard let userDictionary = value as? [String: Any] else { return }
                 
