@@ -21,7 +21,7 @@ class CommentsCell: UICollectionViewCell {
         iv.backgroundColor = UIColor(white: 0, alpha: 0.1)
         iv.contentMode = .scaleAspectFill
         iv.clipsToBounds = true
-        iv.layer.cornerRadius = 50 / 2
+        iv.layer.cornerRadius = 40 / 2
         return iv
     }()
     
@@ -38,10 +38,8 @@ class CommentsCell: UICollectionViewCell {
         backgroundColor = .white
         
         [profileImageView, textView].forEach({addSubview($0)})
-        profileImageView.anchor(top: topAnchor, bottom: bottomAnchor, left: leftAnchor, right: nil, paddingTop: 8, paddingBottom: 8, paddingLeft: 8, paddingRight: 0, width: 50, height: 50)
+        profileImageView.anchor(top: topAnchor, bottom: nil, left: leftAnchor, right: nil, paddingTop: 8, paddingBottom: 8, paddingLeft: 8, paddingRight: 0, width: 40, height: 40)
         textView.anchor(top: topAnchor, bottom: bottomAnchor, left: profileImageView.rightAnchor, right: rightAnchor, paddingTop: 4, paddingBottom: 4, paddingLeft: 8, paddingRight: 4, width: 0, height: 0)
-        
-        textView.separatorLineBottom()
     }
     
     fileprivate func setupComment() {

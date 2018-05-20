@@ -89,7 +89,7 @@ class CommentsController: UICollectionViewController, UICollectionViewDelegateFl
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        let frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 50)
+        let frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 56)
         let dummyCell = CommentsCell(frame: frame)
         dummyCell.comment = comments[indexPath.item]
         dummyCell.layoutIfNeeded()
@@ -97,7 +97,7 @@ class CommentsController: UICollectionViewController, UICollectionViewDelegateFl
         let targetSize = CGSize(width: view.frame.width, height: 1000)
         let estimatedSize = dummyCell.systemLayoutSizeFitting(targetSize)
         
-        let height = max(66, estimatedSize.height)
+        let height = max(56, estimatedSize.height)
         
         return CGSize(width: view.frame.width, height: height)
     }
