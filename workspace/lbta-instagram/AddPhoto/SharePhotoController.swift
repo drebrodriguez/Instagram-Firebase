@@ -70,7 +70,7 @@ class SharePhotoController: UIViewController {
         navigationItem.rightBarButtonItem?.isEnabled = false
         
         let filename = NSUUID().uuidString
-        FIRStorage.storage().reference().child("posts").child(filename).put(uploadData, metadata: nil) { (metadata, err) in
+        Storage.storage().reference().child("posts").child(filename).putData(uploadData, metadata: nil) { (metadata, err) in
             if let error = err {
                 print("Failed to upload post image:", error)
                 activity.stopAnimating()
@@ -78,9 +78,15 @@ class SharePhotoController: UIViewController {
                 return
             }
             //Success upload
-            guard let imageUrl = metadata?.downloadURL()?.absoluteString else { return }
-            
-            self.saveToDatabaseWithImageUrl(imageUrl: imageUrl)
+//            guard let imageUrl = metadata?.downloadURL()?.absoluteString else { return }
+            metadata?.storageReference?.downloadURL(completion: { (url, err) in
+                if let error = err {
+                    print("Failed to fetch imageUrl:", error)
+                }
+                guard let imageUrl = url?.absoluteString else { return }
+                self.saveToDatabaseWithImageUrl(imageUrl: imageUrl)
+            })
+//            self.saveToDatabaseWithImageUrl(imageUrl: imageUrl)
         }
         
     }
@@ -88,9 +94,9 @@ class SharePhotoController: UIViewController {
     fileprivate func saveToDatabaseWithImageUrl(imageUrl: String) {
         guard let postImage = selectedImage else { return }
         guard let caption = textView.text else { return }
-        guard let uid = FIRAuth.auth()?.currentUser?.uid else { return}
+        guard let uid = Auth.auth().currentUser?.uid else { return}
         
-        let userPostRef = FIRDatabase.database().reference().child("posts").child(uid).childByAutoId()
+        let userPostRef = Database.database().reference().child("posts").child(uid).childByAutoId()
         let values = ["imageUrl":imageUrl, "caption":caption, "imageWidth":postImage.size.width, "imageHeight":postImage.size.height, "creationDate":Date().timeIntervalSince1970] as [String : Any]
         
         userPostRef.updateChildValues(values) { (err, ref) in
