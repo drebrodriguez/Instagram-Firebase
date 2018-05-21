@@ -32,7 +32,7 @@ extension Database {
             
             completion(post)
         }) { (err) in
-            print("Failed to fetch post:", err)
+            print("Failed to fetch post:", err.localizedDescription)
         }
     }
 }

@@ -21,6 +21,10 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         return rc
     }()
     
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -64,12 +68,11 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
             userIdDictionary.forEach({ (key, value) in
                 Database.fetchUserWithUID(uid: key, completion: { (user) in
                     Database.fetchPostWithUser(user: user, completion: { (post) in
-                        self.posts.append(post)
                         
+                        self.posts.append(post)
                         self.posts.sort(by: { (p1, p2) -> Bool in
                             return p1.creationDate.compare(p2.creationDate) == .orderedDescending
                         })
-                        
                         self.collectionView?.reloadData()
                     })
                 })
@@ -141,12 +144,27 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     
     func didTapComment(post: Post) {
-        print("username: " + post.user.username, "\ncaption: " + post.caption, "\npost ID: \(post.id ?? "")")
-        
         let commentsController = CommentsController(collectionViewLayout: UICollectionViewFlowLayout())
         commentsController.post = post
         
         navigationController?.pushViewController(commentsController, animated: true)
+    }
+    
+    func didLike(for cell: HomePostCell) {
+        guard let indexPath = collectionView?.indexPath(for: cell) else { return }
+        let post = self.posts[indexPath.item]
+        
+        guard let postId = post.id else { return }
+        let uid = Auth.fetchCurrentUserUID()
+        let values = [uid: 1]
+        Database.database().reference().child("likes").child(postId).updateChildValues(values) { (err, ref) in
+            if let error = err {
+                print("Failed to like post:", error)
+                return
+            }
+            
+            print("Succesfully liked post.")
+        }
     }
     
 }
