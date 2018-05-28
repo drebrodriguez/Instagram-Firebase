@@ -73,7 +73,7 @@ class SearchController: UICollectionViewController, UICollectionViewDelegateFlow
             
             dictionaries.forEach({ (key, value) in
                 
-                if key == Auth.auth().currentUser?.uid { return }
+                if key == Auth.fetchCurrentUserUID() { return }
                 
                 guard let userDictionary = value as? [String: Any] else { return }
                 

@@ -66,8 +66,8 @@ class LoginController: UIViewController {
         return btn
     }()
     
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
     
     override func viewDidLoad() {
@@ -86,6 +86,10 @@ class LoginController: UIViewController {
         signUpButton.anchor(top: nil, bottom: view.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, width: 0, height: 50)
         
         setupInputFields()
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -127,6 +131,10 @@ class LoginController: UIViewController {
     @objc fileprivate func handleLogin() {
         guard let email = emailTextField.text else { return }
         guard let password = passwordTextField.text else { return }
+        
+        [emailTextField, passwordTextField].forEach({$0.resignFirstResponder()})
+//        emailTextField.resignFirstResponder()
+//        passwordTextField.resignFirstResponder()
         
         let activity = activityIndicator()
         activity.startAnimating()

@@ -122,6 +122,7 @@ class CommentsController: UICollectionViewController, UICollectionViewDelegateFl
     }
     
     @objc fileprivate func handleSubmit() {
+        
         let uid = Auth.fetchCurrentUserUID()
         let postId = self.post?.id ?? ""
         let values = ["uid": uid, "text": commentTextField.text ?? "", "creationDate": Date().timeIntervalSince1970] as [String : Any]
@@ -132,6 +133,7 @@ class CommentsController: UICollectionViewController, UICollectionViewDelegateFl
             
             print("Successfully saved comment to DB.")
             self.commentTextField.text = ""
+            self.commentTextField.resignFirstResponder()
         }
     }
     

@@ -18,7 +18,7 @@ extension Database {
             
             completion(user)
         }) { (err) in
-            print("Failed to fetch user:", err)
+            print("Failed to fetch user:", err.localizedDescription)
         }
     }
     
@@ -32,8 +32,25 @@ extension Database {
             
             completion(post)
         }) { (err) in
-            print("Failed to fetch post:", err)
+            print("Failed to fetch post:", err.localizedDescription)
         }
+    }
+    
+    static func fetchUserLikeWithPost(currentUserUID: String, post: Post, completion: @escaping (Post) -> ()) {
+        guard  let postId = post.id else { return }
+        var tempPost = post
+        Database.database().reference().child("likes").child(postId).child(currentUserUID).observeSingleEvent(of: .value, with: { (snapshot) in
+            
+            if let value = snapshot.value as? Int, value == 1 {
+                tempPost.hasLiked = true
+            } else {
+                tempPost.hasLiked = false
+            }
+            
+            completion(tempPost)
+        }, withCancel: { (err) in
+            print("Failed to fetch liked photos:", err.localizedDescription)
+        })
     }
 }
 

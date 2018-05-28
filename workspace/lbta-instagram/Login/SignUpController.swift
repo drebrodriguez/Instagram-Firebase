@@ -153,7 +153,7 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
     }
     
     @objc func handleSignUp() {
-        guard let email = emailTextField.text, email.count > 0 else { return }
+        guard let email = emailTextField.text, !email.isEmpty else { return }
         guard let username = usernameTextField.text, !username.isEmpty else { return }
         guard let password = passwordTextField.text, !password.isEmpty else { return }
         
