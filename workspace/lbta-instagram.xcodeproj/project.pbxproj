@@ -35,6 +35,7 @@
 		8AA53D3220A5EFE90053FAEF /* FirebaseExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AA53D3120A5EFE90053FAEF /* FirebaseExtension.swift */; };
 		8AA53D3720A602790053FAEF /* SearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AA53D3620A602790053FAEF /* SearchController.swift */; };
 		8AA53D3920A60AB80053FAEF /* SearchUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AA53D3820A60AB80053FAEF /* SearchUserCell.swift */; };
+		8AAD29E920B87DE200AD622A /* LikeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AAD29E820B87DE200AD622A /* LikeController.swift */; };
 		8AB4D2DF20AC2A0100A32531 /* CustomAnimationDismisser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB4D2DE20AC2A0100A32531 /* CustomAnimationDismisser.swift */; };
 		8AB4D2E120AD395900A32531 /* CommentsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB4D2E020AD395900A32531 /* CommentsController.swift */; };
 		8AFEB7B020B08850007F1096 /* CommentsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFEB7AF20B08850007F1096 /* CommentsCell.swift */; };
@@ -71,6 +72,7 @@
 		8AA53D3120A5EFE90053FAEF /* FirebaseExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseExtension.swift; sourceTree = "<group>"; };
 		8AA53D3620A602790053FAEF /* SearchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchController.swift; sourceTree = "<group>"; };
 		8AA53D3820A60AB80053FAEF /* SearchUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchUserCell.swift; sourceTree = "<group>"; };
+		8AAD29E820B87DE200AD622A /* LikeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikeController.swift; sourceTree = "<group>"; };
 		8AB4D2DE20AC2A0100A32531 /* CustomAnimationDismisser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAnimationDismisser.swift; sourceTree = "<group>"; };
 		8AB4D2E020AD395900A32531 /* CommentsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsController.swift; sourceTree = "<group>"; };
 		8AFEB7AF20B08850007F1096 /* CommentsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsCell.swift; sourceTree = "<group>"; };
@@ -126,6 +128,7 @@
 				8A7B5A2920A3E17D0028F953 /* Home */,
 				8AA53D3320A602540053FAEF /* Search */,
 				8A1BE21E209BF18400362E95 /* AddPhoto */,
+				8AAD29E720B87D9000AD622A /* Like */,
 				8A5EE97B2099842A0075CD3D /* UserProfile */,
 				8A1BE21B209AF5E400362E95 /* Login */,
 				8A5EE97E20998D1F0075CD3D /* Models */,
@@ -228,6 +231,14 @@
 				8AA53D3820A60AB80053FAEF /* SearchUserCell.swift */,
 			);
 			path = Search;
+			sourceTree = "<group>";
+		};
+		8AAD29E720B87D9000AD622A /* Like */ = {
+			isa = PBXGroup;
+			children = (
+				8AAD29E820B87DE200AD622A /* LikeController.swift */,
+			);
+			path = Like;
 			sourceTree = "<group>";
 		};
 		CD64AD5CB480F62CA6BD5A02 /* Frameworks */ = {
@@ -382,6 +393,7 @@
 				8A7B5A2620A2C19D0028F953 /* UserProfilePhotoCell.swift in Sources */,
 				8A5EE98020998D320075CD3D /* User.swift in Sources */,
 				8AA53D3220A5EFE90053FAEF /* FirebaseExtension.swift in Sources */,
+				8AAD29E920B87DE200AD622A /* LikeController.swift in Sources */,
 				8A79DCC220AC24C5007AD0F0 /* CustomAnimationPresentor.swift in Sources */,
 				8A8D26EB209D83E200524671 /* PhotoSelectorCell.swift in Sources */,
 			);

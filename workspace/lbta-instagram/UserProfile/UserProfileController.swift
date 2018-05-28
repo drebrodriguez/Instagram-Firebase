@@ -30,7 +30,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         let activity = activityIndicator()
         activity.startAnimating()
         
-        guard let uid = userUID ?? Auth.auth().currentUser?.uid else { return }
+        let uid = userUID ?? Auth.fetchCurrentUserUID()
         
         Database.fetchUserWithUID(uid: uid) { (user) in
             self.user = user

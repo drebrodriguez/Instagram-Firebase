@@ -37,6 +37,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         setupNavBarItems()
         
         fetchAllPosts()
+        showAlert(alertTitle: "✨New Feature✨", message: "You can now like a photo by tapping the 🖤 icon.")
         }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
@@ -68,12 +69,25 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
             userIdDictionary.forEach({ (key, value) in
                 Database.fetchUserWithUID(uid: key, completion: { (user) in
                     Database.fetchPostWithUser(user: user, completion: { (post) in
-                        
-                        self.posts.append(post)
-                        self.posts.sort(by: { (p1, p2) -> Bool in
-                            return p1.creationDate.compare(p2.creationDate) == .orderedDescending
+                        var tempPost = post
+                        guard let postId = post.id else { return }
+                        Database.database().reference().child("likes").child(postId).child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+
+                            if let value = snapshot.value as? Int, value == 1 {
+                                tempPost.hasLiked = true
+                            } else {
+                                tempPost.hasLiked = false
+                            }
+
+                            self.posts.append(tempPost)
+                            self.posts.sort(by: { (p1, p2) -> Bool in
+                                return p1.creationDate.compare(p2.creationDate) == .orderedDescending
+                            })
+                            self.collectionView?.reloadData()
+
+                        }, withCancel: { (err) in
+                            print("Failed to fetch liked photos:", err.localizedDescription)
                         })
-                        self.collectionView?.reloadData()
                     })
                 })
             })
@@ -86,7 +100,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     
     fileprivate func fetchPost() {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
+        let uid = Auth.fetchCurrentUserUID()
         
         Database.fetchUserWithUID(uid: uid) { (user) in
             Database.fetchPostWithUser(user: user, completion: { (post) in
@@ -141,6 +155,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     @objc func handleSend() {
         print("send selected")
+        showAlert(alertTitle: "🚧Send🚧", message: "Under Construction")
     }
     
     func didTapComment(post: Post) {
@@ -152,18 +167,20 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     func didLike(for cell: HomePostCell) {
         guard let indexPath = collectionView?.indexPath(for: cell) else { return }
-        let post = self.posts[indexPath.item]
+        var post = self.posts[indexPath.item]
         
         guard let postId = post.id else { return }
         let uid = Auth.fetchCurrentUserUID()
-        let values = [uid: 1]
+        let values = [uid: post.hasLiked == true ? 0 : 1]
         Database.database().reference().child("likes").child(postId).updateChildValues(values) { (err, ref) in
             if let error = err {
                 print("Failed to like post:", error)
                 return
             }
             
-            print("Succesfully liked post.")
+            post.hasLiked = !post.hasLiked
+            self.posts[indexPath.item] = post
+            self.collectionView?.reloadItems(at: [indexPath])
         }
     }
     

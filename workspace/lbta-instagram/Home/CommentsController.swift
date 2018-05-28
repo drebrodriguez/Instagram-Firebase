@@ -123,7 +123,6 @@ class CommentsController: UICollectionViewController, UICollectionViewDelegateFl
     
     @objc fileprivate func handleSubmit() {
         
-        
         let uid = Auth.fetchCurrentUserUID()
         let postId = self.post?.id ?? ""
         let values = ["uid": uid, "text": commentTextField.text ?? "", "creationDate": Date().timeIntervalSince1970] as [String : Any]

@@ -94,7 +94,7 @@ class SharePhotoController: UIViewController {
     fileprivate func saveToDatabaseWithImageUrl(imageUrl: String) {
         guard let postImage = selectedImage else { return }
         guard let caption = textView.text else { return }
-        guard let uid = Auth.auth().currentUser?.uid else { return}
+        let uid = Auth.fetchCurrentUserUID()
         
         let userPostRef = Database.database().reference().child("posts").child(uid).childByAutoId()
         let values = ["imageUrl":imageUrl, "caption":caption, "imageWidth":postImage.size.width, "imageHeight":postImage.size.height, "creationDate":Date().timeIntervalSince1970] as [String : Any]
