@@ -11,19 +11,27 @@ import Firebase
 
 class UserProfileController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     
-    let cellId = "cellId", headerId = "headerId"
+    let cellId = "cellId", headerId = "headerId", homePostCellId = "homePostCellId", bookmarkCellId = "bookmarkCellId"
     
-    var user: User?, posts = [Post](), userUID: String?
+    var user: User?, posts = [Post](), userUID: String?, isGridView = true
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        setupCollectionView()
+        
+        fetchUserAndPost()
+        
+        setupLogOutButton()
+    }
+    
+    fileprivate func setupCollectionView() {
         collectionView?.backgroundColor = .white
         
         collectionView?.register(UserProfileHeader.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headerId)
         collectionView?.register(UserProfilePhotoCell.self, forCellWithReuseIdentifier: cellId)
-        
-        fetchUserAndPost()
-        setupLogOutButton()
+        collectionView?.register(HomePostCell.self, forCellWithReuseIdentifier: homePostCellId)
+//        collectionView?.register(UICollectionViewCell.self, forCellWithReuseIdentifier: bookmarkCellId)
     }
     
     fileprivate func fetchUserAndPost() {
@@ -41,7 +49,26 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
             Database.fetchPostWithUser(user: user, completion: { (post) in
                 self.posts.insert(post, at: 0)
                 
-                self.collectionView?.reloadData()
+                let postCount = self.posts.filter{return $0.id != nil}.count
+                self.user?.postCount = postCount
+                
+//                Database.database().reference().child("following").child(uid).observe(.childAdded, with: { (snapshot) in
+//                    let count = snapshot.childrenCount
+//                    self.user?.followingCount = Int(count)
+//                    self.collectionView?.reloadData()
+//
+//                }, withCancel: { (err) in
+//                    print("Failed to count following:", err.localizedDescription)
+//                })
+                Database.database().reference().child("following").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+
+                    let count = snapshot.childrenCount
+                    self.user?.followingCount = Int(count)
+                    self.collectionView?.reloadData()
+
+                }, withCancel: { (err) in
+                    print("Failed to count following:", err.localizedDescription)
+                })
             })
             
             activity.stopAnimating()
@@ -80,16 +107,35 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! UserProfilePhotoCell
+        if isGridView {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! UserProfilePhotoCell
+            
+            cell.post = posts[indexPath.item]
+            
+            return cell
+        } else {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: homePostCellId, for: indexPath) as! HomePostCell
+            
+            cell.post = posts[indexPath.item]
+            
+            return cell
+        }
         
-        cell.post = posts[indexPath.item]
-        
-        return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let size = (view.frame.width - 2) / 3
-        return CGSize(width: size, height: size)
+        if isGridView {
+            let size = (view.frame.width - 2) / 3
+            return CGSize(width: size, height: size)
+        } else {
+            var height: CGFloat = 40 + 16
+            height += view.frame.width
+            height += 50
+            height += 80
+            
+            return CGSize(width: view.frame.width, height: height)
+        }
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
@@ -104,11 +150,28 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerId, for: indexPath) as! UserProfileHeader
         
         header.user = self.user
+        header.delegate = self
         
         return header
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         return CGSize(width: view.frame.width, height: 200)
+    }
+}
+
+extension UserProfileController: UserProfileHeaderDelegate {
+    func didChangeToGridView() {
+        isGridView = true
+        collectionView?.reloadData()
+    }
+    
+    func didChangeToListView() {
+        isGridView = false
+        collectionView?.reloadData()
+    }
+    
+    func didChangeToBookmark() {
+        showAlert(alertTitle: "Bookmark", message: "Bookmark section under development.")
     }
 }

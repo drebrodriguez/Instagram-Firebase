@@ -70,7 +70,8 @@ class SharePhotoController: UIViewController {
         navigationItem.rightBarButtonItem?.isEnabled = false
         
         let filename = NSUUID().uuidString
-        Storage.storage().reference().child("posts").child(filename).putData(uploadData, metadata: nil) { (metadata, err) in
+        let storageRef = Storage.storage().reference().child("posts").child(filename)
+        storageRef.putData(uploadData, metadata: nil) { (metadata, err) in
             if let error = err {
                 print("Failed to upload post image:", error)
                 activity.stopAnimating()
@@ -79,13 +80,22 @@ class SharePhotoController: UIViewController {
             }
             //Success upload
 //            guard let imageUrl = metadata?.downloadURL()?.absoluteString else { return }
-            metadata?.storageReference?.downloadURL(completion: { (url, err) in
+            storageRef.downloadURL(completion: { (url, err) in
                 if let error = err {
                     print("Failed to fetch imageUrl:", error)
+                    return
                 }
                 guard let imageUrl = url?.absoluteString else { return }
                 self.saveToDatabaseWithImageUrl(imageUrl: imageUrl)
             })
+//            metadata?.storageReference?.downloadURL(completion: { (url, err) in
+//                if let error = err {
+//                    print("Failed to fetch imageUrl:", error)
+//                    return
+//                }
+//                guard let imageUrl = url?.absoluteString else { return }
+//                self.saveToDatabaseWithImageUrl(imageUrl: imageUrl)
+//            })
 //            self.saveToDatabaseWithImageUrl(imageUrl: imageUrl)
         }
         
