@@ -73,9 +73,9 @@ class UserProfileHeader: UICollectionViewCell {
     
     let followersLabel: UILabel = {
         let lbl = UILabel()
-        let attributedText = NSMutableAttributedString(string: "0\n", attributes: [NSAttributedStringKey.font:UIFont.boldSystemFont(ofSize: 14)])
-        attributedText.append(NSAttributedString(string: "followers", attributes: [NSAttributedStringKey.font:UIFont.systemFont(ofSize: 14), NSAttributedStringKey.foregroundColor:UIColor.lightGray]))
-        lbl.attributedText = attributedText
+//        let attributedText = NSMutableAttributedString(string: "0\n", attributes: [NSAttributedStringKey.font:UIFont.boldSystemFont(ofSize: 14)])
+//        attributedText.append(NSAttributedString(string: "followers", attributes: [NSAttributedStringKey.font:UIFont.systemFont(ofSize: 14), NSAttributedStringKey.foregroundColor:UIColor.lightGray]))
+//        lbl.attributedText = attributedText
         lbl.textAlignment = .center
         lbl.numberOfLines = 0
         return lbl
@@ -248,6 +248,11 @@ class UserProfileHeader: UICollectionViewCell {
         let followingAttributedText = NSMutableAttributedString(string: "\(followingCount)\n", attributes: [NSAttributedStringKey.font:UIFont.boldSystemFont(ofSize: 14)])
         followingAttributedText.append(NSAttributedString(string: "following", attributes: [NSAttributedStringKey.font:UIFont.systemFont(ofSize: 14), NSAttributedStringKey.foregroundColor:UIColor.lightGray]))
         followingLabel.attributedText = followingAttributedText
+        
+        guard  let followerCount = user?.followerCount else { return }
+        let followersAttributedText = NSMutableAttributedString(string: "\(followerCount)\n", attributes: [NSAttributedStringKey.font:UIFont.boldSystemFont(ofSize: 14)])
+        followersAttributedText.append(NSAttributedString(string: "followers", attributes: [NSAttributedStringKey.font:UIFont.systemFont(ofSize: 14), NSAttributedStringKey.foregroundColor:UIColor.lightGray]))
+        followersLabel.attributedText = followersAttributedText
     }
     
     required init?(coder aDecoder: NSCoder) {

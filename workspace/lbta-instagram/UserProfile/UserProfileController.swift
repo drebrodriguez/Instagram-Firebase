@@ -49,10 +49,13 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
             Database.fetchPostWithUser(user: user, completion: { (post) in
                 self.posts.insert(post, at: 0)
                 
-                let postCount = self.posts.filter{return $0.id != nil}.count
+//                let postCount = self.posts.filter{return $0.id != nil}.count
+                let postCount = self.posts.count
                 self.user?.postCount = postCount
                 
-//                Database.database().reference().child("following").child(uid).observe(.childAdded, with: { (snapshot) in
+                let followingRef = Database.database().reference().child("following")
+//                    followingRef.child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+//
 //                    let count = snapshot.childrenCount
 //                    self.user?.followingCount = Int(count)
 //                    self.collectionView?.reloadData()
@@ -60,14 +63,38 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
 //                }, withCancel: { (err) in
 //                    print("Failed to count following:", err.localizedDescription)
 //                })
-                Database.database().reference().child("following").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
-
-                    let count = snapshot.childrenCount
-                    self.user?.followingCount = Int(count)
+                
+                followingRef.observeSingleEvent(of: .value, with: { (snapshot) in
+                    
+                    guard let dictionaries = snapshot.value as? [String: Any] else { return }
+                    var count = 0
+                    
+                    dictionaries.forEach({ (key, value) in
+                        if key == uid {
+                            
+                            guard let following = value as? [String: Any] else { return }
+                            self.user?.followingCount = following.count
+                            
+                        } else if key != uid {
+                            
+                            guard let dictionary = value as? [String: Any] else { return }
+                            dictionary.forEach({ (key, _) in
+                                
+                                if key == uid {
+                                    count += 1
+                                }
+                                
+                            })
+                            
+                            self.user?.followerCount = count
+                        }
+                        
+                    })
+//                    print("----")
                     self.collectionView?.reloadData()
-
+                    
                 }, withCancel: { (err) in
-                    print("Failed to count following:", err.localizedDescription)
+                    print("Failed to count followers/following:", err.localizedDescription)
                 })
             })
             
