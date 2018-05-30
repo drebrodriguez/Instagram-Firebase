@@ -70,7 +70,8 @@ class SharePhotoController: UIViewController {
         navigationItem.rightBarButtonItem?.isEnabled = false
         
         let filename = NSUUID().uuidString
-        Storage.storage().reference().child("posts").child(filename).putData(uploadData, metadata: nil) { (metadata, err) in
+        let storageRef = Storage.storage().reference().child("posts").child(filename)
+        storageRef.putData(uploadData, metadata: nil) { (metadata, err) in
             if let error = err {
                 print("Failed to upload post image:", error)
                 activity.stopAnimating()
@@ -79,13 +80,22 @@ class SharePhotoController: UIViewController {
             }
             //Success upload
 //            guard let imageUrl = metadata?.downloadURL()?.absoluteString else { return }
-            metadata?.storageReference?.downloadURL(completion: { (url, err) in
+            storageRef.downloadURL(completion: { (url, err) in
                 if let error = err {
                     print("Failed to fetch imageUrl:", error)
+                    return
                 }
                 guard let imageUrl = url?.absoluteString else { return }
                 self.saveToDatabaseWithImageUrl(imageUrl: imageUrl)
             })
+//            metadata?.storageReference?.downloadURL(completion: { (url, err) in
+//                if let error = err {
+//                    print("Failed to fetch imageUrl:", error)
+//                    return
+//                }
+//                guard let imageUrl = url?.absoluteString else { return }
+//                self.saveToDatabaseWithImageUrl(imageUrl: imageUrl)
+//            })
 //            self.saveToDatabaseWithImageUrl(imageUrl: imageUrl)
         }
         
@@ -94,7 +104,7 @@ class SharePhotoController: UIViewController {
     fileprivate func saveToDatabaseWithImageUrl(imageUrl: String) {
         guard let postImage = selectedImage else { return }
         guard let caption = textView.text else { return }
-        guard let uid = Auth.auth().currentUser?.uid else { return}
+        let uid = Auth.fetchCurrentUserUID()
         
         let userPostRef = Database.database().reference().child("posts").child(uid).childByAutoId()
         let values = ["imageUrl":imageUrl, "caption":caption, "imageWidth":postImage.size.width, "imageHeight":postImage.size.height, "creationDate":Date().timeIntervalSince1970] as [String : Any]

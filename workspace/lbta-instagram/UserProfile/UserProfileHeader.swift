@@ -9,14 +9,23 @@
 import UIKit
 import Firebase
 
+protocol UserProfileHeaderDelegate {
+    func didChangeToGridView()
+    func didChangeToListView()
+    func didChangeToBookmark()
+}
+
 class UserProfileHeader: UICollectionViewCell {
     
     var user: User? {
         didSet {
             setupProfileImageAndUsername()
             setupEditFollowButton()
+            setupStatCount()
         }
     }
+    
+    var delegate: UserProfileHeaderDelegate?
     
     let profileImageView: CustomImageView = {
         let iv = CustomImageView()
@@ -32,31 +41,31 @@ class UserProfileHeader: UICollectionViewCell {
         return lbl
     }()
     
-    let gridButton: UIButton = {
+    lazy var gridButton: UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(#imageLiteral(resourceName: "grid"), for: .normal)
+        btn.addTarget(self, action: #selector(handleGridView), for: .touchUpInside)
         return btn
     }()
     
-    let listButton: UIButton = {
+    lazy var listButton: UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(#imageLiteral(resourceName: "list"), for: .normal)
         btn.tintColor = UIColor(white: 0, alpha: 0.2)
+        btn.addTarget(self, action: #selector(handleListView), for: .touchUpInside)
         return btn
     }()
     
-    let bookmarkButton: UIButton = {
+    lazy var bookmarkButton: UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(#imageLiteral(resourceName: "ribbon"), for: .normal)
         btn.tintColor = UIColor(white: 0, alpha: 0.2)
+        btn.addTarget(self, action: #selector(handleBookmark), for: .touchUpInside)
         return btn
     }()
     
     let postLabel: UILabel = {
         let lbl = UILabel()
-        let attributedText = NSMutableAttributedString(string: "11\n", attributes: [NSAttributedStringKey.font:UIFont.boldSystemFont(ofSize: 14)])
-        attributedText.append(NSAttributedString(string: "posts", attributes: [NSAttributedStringKey.font:UIFont.systemFont(ofSize: 14), NSAttributedStringKey.foregroundColor:UIColor.lightGray]))
-        lbl.attributedText = attributedText
         lbl.textAlignment = .center
         lbl.numberOfLines = 0
         return lbl
@@ -64,9 +73,9 @@ class UserProfileHeader: UICollectionViewCell {
     
     let followersLabel: UILabel = {
         let lbl = UILabel()
-        let attributedText = NSMutableAttributedString(string: "0\n", attributes: [NSAttributedStringKey.font:UIFont.boldSystemFont(ofSize: 14)])
-        attributedText.append(NSAttributedString(string: "followers", attributes: [NSAttributedStringKey.font:UIFont.systemFont(ofSize: 14), NSAttributedStringKey.foregroundColor:UIColor.lightGray]))
-        lbl.attributedText = attributedText
+//        let attributedText = NSMutableAttributedString(string: "0\n", attributes: [NSAttributedStringKey.font:UIFont.boldSystemFont(ofSize: 14)])
+//        attributedText.append(NSAttributedString(string: "followers", attributes: [NSAttributedStringKey.font:UIFont.systemFont(ofSize: 14), NSAttributedStringKey.foregroundColor:UIColor.lightGray]))
+//        lbl.attributedText = attributedText
         lbl.textAlignment = .center
         lbl.numberOfLines = 0
         return lbl
@@ -74,9 +83,9 @@ class UserProfileHeader: UICollectionViewCell {
     
     let followingLabel: UILabel = {
         let lbl = UILabel()
-        let attributedText = NSMutableAttributedString(string: "0\n", attributes: [NSAttributedStringKey.font:UIFont.boldSystemFont(ofSize: 14)])
-        attributedText.append(NSAttributedString(string: "following", attributes: [NSAttributedStringKey.font:UIFont.systemFont(ofSize: 14), NSAttributedStringKey.foregroundColor:UIColor.lightGray]))
-        lbl.attributedText = attributedText
+//        let attributedText = NSMutableAttributedString(string: "0\n", attributes: [NSAttributedStringKey.font:UIFont.boldSystemFont(ofSize: 14)])
+//        attributedText.append(NSAttributedString(string: "following", attributes: [NSAttributedStringKey.font:UIFont.systemFont(ofSize: 14), NSAttributedStringKey.foregroundColor:UIColor.lightGray]))
+//        lbl.attributedText = attributedText
         lbl.textAlignment = .center
         lbl.numberOfLines = 0
         return lbl
@@ -111,6 +120,26 @@ class UserProfileHeader: UICollectionViewCell {
         editProfileButton.anchor(top: postLabel.bottomAnchor, bottom: nil, left: postLabel.leftAnchor, right: followingLabel.rightAnchor, paddingTop: 4, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, width: 0, height: 34)
         
         setupBottomToolbar()
+    }
+    
+    @objc fileprivate func handleGridView() {
+        toolBarSelected(gridButton, unselected: [listButton, bookmarkButton])
+        delegate?.didChangeToGridView()
+    }
+    
+    @objc fileprivate func handleListView() {
+        toolBarSelected(listButton, unselected: [gridButton, bookmarkButton])
+        delegate?.didChangeToListView()
+    }
+    
+    @objc fileprivate func handleBookmark() {
+        toolBarSelected(bookmarkButton, unselected: [gridButton, listButton])
+        delegate?.didChangeToBookmark()
+    }
+    
+    fileprivate func toolBarSelected(_ selected: UIButton, unselected: [UIButton]) {
+        selected.tintColor = UIColor.rgb(17, 154, 237)
+        unselected.forEach({$0.tintColor = UIColor(white: 0, alpha: 0.2)})
     }
     
     @objc fileprivate func handleEditFollow() {
@@ -207,6 +236,23 @@ class UserProfileHeader: UICollectionViewCell {
         profileImageView.loadImageWithUrl(urlString: profileImageUrl)
         
         usernameLabel.text = user?.username
+    }
+    
+    fileprivate func setupStatCount() {
+        guard let postCount = user?.postCount else { return }
+        let postAttributedText = NSMutableAttributedString(string: "\(postCount)\n", attributes: [NSAttributedStringKey.font:UIFont.boldSystemFont(ofSize: 14)])
+        postAttributedText.append(NSAttributedString(string: "posts", attributes: [NSAttributedStringKey.font:UIFont.systemFont(ofSize: 14), NSAttributedStringKey.foregroundColor:UIColor.lightGray]))
+        postLabel.attributedText = postAttributedText
+        
+        guard let followingCount = user?.followingCount else { return }
+        let followingAttributedText = NSMutableAttributedString(string: "\(followingCount)\n", attributes: [NSAttributedStringKey.font:UIFont.boldSystemFont(ofSize: 14)])
+        followingAttributedText.append(NSAttributedString(string: "following", attributes: [NSAttributedStringKey.font:UIFont.systemFont(ofSize: 14), NSAttributedStringKey.foregroundColor:UIColor.lightGray]))
+        followingLabel.attributedText = followingAttributedText
+        
+        guard  let followerCount = user?.followerCount else { return }
+        let followersAttributedText = NSMutableAttributedString(string: "\(followerCount)\n", attributes: [NSAttributedStringKey.font:UIFont.boldSystemFont(ofSize: 14)])
+        followersAttributedText.append(NSAttributedString(string: "followers", attributes: [NSAttributedStringKey.font:UIFont.systemFont(ofSize: 14), NSAttributedStringKey.foregroundColor:UIColor.lightGray]))
+        followersLabel.attributedText = followersAttributedText
     }
     
     required init?(coder aDecoder: NSCoder) {
