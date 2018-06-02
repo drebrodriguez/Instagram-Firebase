@@ -15,7 +15,7 @@ struct User {
     
     var postCount = 0
     var followingCount = 0
-    var followerCount = 0
+    var followersCount = 0
     
     init(uid: String, dictionary: [String:Any]) {
         self.uid = uid
