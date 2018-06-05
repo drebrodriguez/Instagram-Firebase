@@ -154,8 +154,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     
     @objc func handleSend() {
-        print("send selected")
-        showAlert(alertTitle: "🚧Send🚧", message: "Under Construction")
+        showAlert(alertTitle: "🚧 Send Message 🚧", message: "Under development")
     }
     
     func didTapComment(post: Post) {

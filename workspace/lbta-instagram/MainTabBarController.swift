@@ -15,6 +15,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
         
         self.delegate = self
         view.backgroundColor = .white
+        tabBar.isTranslucent = false
         
         if Auth.auth().currentUser == nil {
             DispatchQueue.main.async {
@@ -63,6 +64,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
         let navController = UINavigationController(rootViewController: viewController)
         navController.tabBarItem.image = unselectedImage
         navController.tabBarItem.selectedImage = selectedImage
+        navController.navigationBar.isTranslucent = false
         
         return navController
     }

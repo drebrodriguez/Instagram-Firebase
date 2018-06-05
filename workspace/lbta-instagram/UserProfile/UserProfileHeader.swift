@@ -108,6 +108,8 @@ class UserProfileHeader: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
+        backgroundColor = .white
+        
         [profileImageView, usernameLabel, editProfileButton].forEach {addSubview($0)}
         
         profileImageView.anchor(top: topAnchor, bottom: nil, left: leftAnchor, right: nil, paddingTop: 12, paddingBottom: 0, paddingLeft: 12, paddingRight: 0, width: 80, height: 80)
@@ -249,7 +251,7 @@ class UserProfileHeader: UICollectionViewCell {
         followingAttributedText.append(NSAttributedString(string: "following", attributes: [NSAttributedStringKey.font:UIFont.systemFont(ofSize: 14), NSAttributedStringKey.foregroundColor:UIColor.lightGray]))
         followingLabel.attributedText = followingAttributedText
         
-        guard  let followerCount = user?.followerCount else { return }
+        guard  let followerCount = user?.followersCount else { return }
         let followersAttributedText = NSMutableAttributedString(string: "\(followerCount)\n", attributes: [NSAttributedStringKey.font:UIFont.boldSystemFont(ofSize: 14)])
         followersAttributedText.append(NSAttributedString(string: "followers", attributes: [NSAttributedStringKey.font:UIFont.systemFont(ofSize: 14), NSAttributedStringKey.foregroundColor:UIColor.lightGray]))
         followersLabel.attributedText = followersAttributedText

@@ -37,7 +37,7 @@ class SearchController: UICollectionViewController, UICollectionViewDelegateFlow
         fetchUsers()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         searchBar.isHidden = false
     }

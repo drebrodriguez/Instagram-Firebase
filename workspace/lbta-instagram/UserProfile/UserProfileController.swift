@@ -11,9 +11,11 @@ import Firebase
 
 class UserProfileController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     
-    let cellId = "cellId", headerId = "headerId", homePostCellId = "homePostCellId", bookmarkCellId = "bookmarkCellId"
+    let cellId = "cellId", headerId = "headerId", footerId = "footerId"
+    let homePostCellId = "homePostCellId", bookmarkCellId = "bookmarkCellId"
     
-    var user: User?, posts = [Post](), userUID: String?, isGridView = true
+    var user: User?, posts = [Post](), userUID: String?
+    var isGridView = true, isFinishedPaging = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,22 +23,63 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         setupCollectionView()
         
         fetchUserAndPost()
-        
-        setupLogOutButton()
     }
     
     fileprivate func setupCollectionView() {
         collectionView?.backgroundColor = .white
         
         collectionView?.register(UserProfileHeader.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headerId)
+        collectionView?.register(UserProfileFooter.self, forSupplementaryViewOfKind: UICollectionElementKindSectionFooter, withReuseIdentifier: footerId)
+        
         collectionView?.register(UserProfilePhotoCell.self, forCellWithReuseIdentifier: cellId)
         collectionView?.register(HomePostCell.self, forCellWithReuseIdentifier: homePostCellId)
-//        collectionView?.register(UICollectionViewCell.self, forCellWithReuseIdentifier: bookmarkCellId)
+    }
+    
+    fileprivate func paginatePosts(user: User) {
+        let queryLimit = 9
+        let postsRef = Database.database().reference().child("posts").child(user.uid)
+        var query = postsRef.queryOrdered(byChild: "creationDate")
+        
+        if posts.count > 0 {
+            let value = posts.last?.creationDate.timeIntervalSince1970
+            query = query.queryEnding(atValue: value)
+        }
+        
+        query.queryLimited(toLast: UInt(queryLimit)).observeSingleEvent(of: .value, with: { (snapshot) in
+
+            guard var allObjects = snapshot.children.allObjects as? [DataSnapshot] else { return }
+
+            allObjects.reverse()
+
+            if allObjects.count < queryLimit {
+                self.isFinishedPaging = true
+            }
+
+            if self.posts.count > 0 && allObjects.count > 0 {
+                allObjects.removeFirst()
+            }
+
+            allObjects.forEach({ (snapshot) in
+                guard let dictionary =  snapshot.value as? [String: Any] else { return }
+
+                var post = Post(user: user, dictionary: dictionary)
+                post.id = snapshot.key
+
+//                self.posts.insert(post, at: 0)
+                self.posts.append(post)
+
+            })
+
+            self.collectionView?.reloadData()
+
+        }) { (err) in
+            print("Failed to paginate posts:", err.localizedDescription)
+        }
     }
     
     fileprivate func fetchUserAndPost() {
-        let activity = activityIndicator()
-        activity.startAnimating()
+//        let activity = activityIndicator()
+//        activity.startAnimating()
         
         let uid = userUID ?? Auth.fetchCurrentUserUID()
         
@@ -44,67 +87,68 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
             self.user = user
             if uid == Auth.fetchCurrentUserUID() {
                 self.navigationItem.title = self.user?.username
+                self.setupLogOutButton()
+            } else {
+                self.setupDirectMessageButton()
             }
             
-            Database.fetchPostWithUser(user: user, completion: { (post) in
-                self.posts.insert(post, at: 0)
+            self.fetchFollowersAndFollowingWith(uid: uid)
+            
+            Database.database().reference().child("posts").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
                 
-//                let postCount = self.posts.filter{return $0.id != nil}.count
-                let postCount = self.posts.count
+                let postCount = Int(snapshot.childrenCount)
                 self.user?.postCount = postCount
                 
-                let followingRef = Database.database().reference().child("following")
-//                    followingRef.child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
-//
-//                    let count = snapshot.childrenCount
-//                    self.user?.followingCount = Int(count)
-//                    self.collectionView?.reloadData()
-//
-//                }, withCancel: { (err) in
-//                    print("Failed to count following:", err.localizedDescription)
-//                })
-                
-                followingRef.observeSingleEvent(of: .value, with: { (snapshot) in
-                    
-                    guard let dictionaries = snapshot.value as? [String: Any] else { return }
-                    var count = 0
-                    
-                    dictionaries.forEach({ (key, value) in
-                        if key == uid {
-                            
-                            guard let following = value as? [String: Any] else { return }
-                            self.user?.followingCount = following.count
-                            
-                        } else if key != uid {
-                            
-                            guard let dictionary = value as? [String: Any] else { return }
-                            dictionary.forEach({ (key, _) in
-                                
-                                if key == uid {
-                                    count += 1
-                                }
-                                
-                            })
-                            
-                            self.user?.followerCount = count
-                        }
-                        
-                    })
-//                    print("----")
-                    self.collectionView?.reloadData()
-                    
-                }, withCancel: { (err) in
-                    print("Failed to count followers/following:", err.localizedDescription)
-                })
+            }, withCancel: { (err) in
+                print("Failed to count posts.", err.localizedDescription)
             })
             
-            activity.stopAnimating()
+            self.paginatePosts(user: user)
+            
+//            activity.stopAnimating()
             self.collectionView?.reloadData()
+        }
+    }
+    
+    fileprivate func fetchFollowersAndFollowingWith(uid: String) {
+        
+        let followingRef = Database.database().reference().child("following")
+        followingRef.observe(.value, with: { (snapshot) in
+            var count = 0
+            
+            guard let followingDictionaries  = snapshot.value as? [String: Any] else { return }
+            followingDictionaries.forEach({ (key, value) in
+                if key == uid {
+                    guard let following = value as? [String:Any] else { return }
+                    self.user?.followingCount = following.count
+                }
+                
+                if key != uid {
+                    guard let followersDictionary = value as? [String: Any] else { return }
+                    followersDictionary.forEach({ (key, _) in
+                        if key == uid {
+                            count += 1
+                        }
+                    })
+                    self.user?.followersCount = count
+                }
+            })
+            self.collectionView?.reloadData()
+        }) { (err) in
+            print("Failed to count followers and following:", err.localizedDescription)
         }
     }
     
     fileprivate func setupLogOutButton() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "gear").withRenderingMode(.alwaysOriginal), style: UIBarButtonItemStyle.plain, target: self, action: #selector(handleLogOut))
+    }
+    
+    fileprivate func setupDirectMessageButton() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "send2").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(handleSend))
+    }
+    
+    @objc fileprivate func handleSend() {
+        showAlert(alertTitle: "🚧 Direct Message 🚧", message: "Under development")
     }
     
     @objc fileprivate func handleLogOut() {
@@ -132,8 +176,11 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return posts.count
     }
-    
+    var currentIndexPathItem = Int()
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        currentIndexPathItem = indexPath.item
+        
         if isGridView {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! UserProfilePhotoCell
             
@@ -173,18 +220,72 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         return 1
     }
     
+    var footerView = UserProfileFooter()
+    
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerId, for: indexPath) as! UserProfileHeader
         
-        header.user = self.user
-        header.delegate = self
-        
-        return header
+        if kind == UICollectionElementKindSectionHeader {
+            let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerId, for: indexPath) as! UserProfileHeader
+            
+            header.user = self.user
+            header.delegate = self
+            
+            return header
+        } else {
+            let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: footerId, for: indexPath) as! UserProfileFooter
+            self.footerView = footer
+            return footer
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         return CGSize(width: view.frame.width, height: 200)
     }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
+        if isFinishedPaging {
+            return CGSize.zero
+        } else {
+            return CGSize(width: view.frame.width, height: 60)
+        }
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, willDisplaySupplementaryView view: UICollectionReusableView, forElementKind elementKind: String, at indexPath: IndexPath) {
+        if elementKind == UICollectionElementKindSectionFooter {
+            footerView.activityIndicator.startAnimating()
+            
+            if currentIndexPathItem == self.posts.count - 1 && !isFinishedPaging {
+                if let user = self.user {
+                    paginatePosts(user: user)
+                }
+            }
+            
+        }
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, didEndDisplayingSupplementaryView view: UICollectionReusableView, forElementOfKind elementKind: String, at indexPath: IndexPath) {
+        if elementKind == UICollectionElementKindSectionFooter {
+            footerView.activityIndicator.stopAnimating()
+        }
+    }
+    
+//    override func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+//        let contentOffset = scrollView.contentOffset.y
+//        let contentHeight = scrollView.contentSize.height
+//        let diffHeight = contentHeight - contentOffset
+//
+//        let frameHeight = scrollView.frame.size.height
+//        let pullHeight = fabs(diffHeight - frameHeight)
+//
+//        if pullHeight <= 0.2 {
+//            if currentIndexPathItem == self.posts.count - 1 && !isFinishedPaging {
+//                if let user = self.user {
+//                    paginatePosts(user: user)
+//                }
+//            }
+//        }
+//
+//    }
 }
 
 extension UserProfileController: UserProfileHeaderDelegate {
