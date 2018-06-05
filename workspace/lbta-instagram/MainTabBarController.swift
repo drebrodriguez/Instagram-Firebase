@@ -15,6 +15,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
         
         self.delegate = self
         view.backgroundColor = .white
+        tabBar.isTranslucent = false
         
         if Auth.auth().currentUser == nil {
             DispatchQueue.main.async {
