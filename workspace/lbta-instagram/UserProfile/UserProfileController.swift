@@ -44,42 +44,38 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
             let value = posts.last?.creationDate.timeIntervalSince1970
             query = query.queryEnding(atValue: value)
         }
-        
-        query.queryLimited(toLast: UInt(queryLimit)).observeSingleEvent(of: .value, with: { (snapshot) in
+        query.queryLimited(toLast: UInt(queryLimit)).observe(.value, with: { (snapshot) in
 
             guard var allObjects = snapshot.children.allObjects as? [DataSnapshot] else { return }
-
+            
             allObjects.reverse()
-
+            
             if allObjects.count < queryLimit {
                 self.isFinishedPaging = true
             }
-
+            
             if self.posts.count > 0 && allObjects.count > 0 {
                 allObjects.removeFirst()
             }
-
+            
             allObjects.forEach({ (snapshot) in
                 guard let dictionary =  snapshot.value as? [String: Any] else { return }
-
+                
                 var post = Post(user: user, dictionary: dictionary)
                 post.id = snapshot.key
-
+                
 //                self.posts.insert(post, at: 0)
                 self.posts.append(post)
-
+                
             })
-
+            
             self.collectionView?.reloadData()
-
         }) { (err) in
             print("Failed to paginate posts:", err.localizedDescription)
         }
     }
     
     fileprivate func fetchUserAndPost() {
-//        let activity = activityIndicator()
-//        activity.startAnimating()
         
         let uid = userUID ?? Auth.fetchCurrentUserUID()
         
@@ -92,27 +88,26 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
                 self.setupDirectMessageButton()
             }
             
-            self.fetchFollowersAndFollowingWith(uid: uid)
-            
-            Database.database().reference().child("posts").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
-                
-                let postCount = Int(snapshot.childrenCount)
-                self.user?.postCount = postCount
-                
-            }, withCancel: { (err) in
-                print("Failed to count posts.", err.localizedDescription)
-            })
-            
+            self.fetchUserStats(uid: uid)
             self.paginatePosts(user: user)
             
-//            activity.stopAnimating()
             self.collectionView?.reloadData()
         }
     }
     
-    fileprivate func fetchFollowersAndFollowingWith(uid: String) {
+    fileprivate func fetchUserStats(uid: String) {
+        let dataRef = Database.database().reference()
         
-        let followingRef = Database.database().reference().child("following")
+        let postsRef = dataRef.child("posts").child(uid)
+        postsRef.observe(.value, with: { (snapshot) in
+            let postCount = Int(snapshot.childrenCount)
+            self.user?.postCount = postCount
+            
+        }) { (err) in
+            print("Failed to count posts:", err.localizedDescription)
+        }
+        
+        let followingRef = dataRef.child("following")
         followingRef.observe(.value, with: { (snapshot) in
             var count = 0
             
