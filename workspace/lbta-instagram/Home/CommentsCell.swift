@@ -29,16 +29,21 @@ class CommentsCell: UICollectionViewCell {
         let tv = UITextView()
         tv.isEditable = false
         tv.isScrollEnabled = false
+        tv.separatorLineBottom()
         return tv
     }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
+        setupView()
+    }
+    
+    fileprivate func setupView() {
         backgroundColor = .white
         
         [profileImageView, textView].forEach({addSubview($0)})
-        profileImageView.anchor(top: topAnchor, bottom: nil, left: leftAnchor, right: nil, paddingTop: 8, paddingBottom: 8, paddingLeft: 8, paddingRight: 0, width: 40, height: 40)
+        profileImageView.anchor(top: topAnchor, bottom: nil, left: leftAnchor, right: nil, paddingTop: 8, paddingBottom: 0, paddingLeft: 8, paddingRight: 0, width: 40, height: 40)
         textView.anchor(top: topAnchor, bottom: bottomAnchor, left: profileImageView.rightAnchor, right: rightAnchor, paddingTop: 4, paddingBottom: 4, paddingLeft: 8, paddingRight: 4, width: 0, height: 0)
     }
     

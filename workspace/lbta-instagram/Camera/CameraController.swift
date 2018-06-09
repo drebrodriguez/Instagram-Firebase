@@ -98,9 +98,9 @@ class CameraController: UIViewController, AVCapturePhotoCaptureDelegate, UIViewC
     
     fileprivate func setupHUD() {
         [capturePhotoButton, dismissButton].forEach({view.addSubview($0)})
-        capturePhotoButton.anchor(top: nil, bottom: view.bottomAnchor, left: nil, right: nil, paddingTop: 0, paddingBottom: 20, paddingLeft: 0, paddingRight: 0, width: 80, height: 80)
+        capturePhotoButton.anchor(top: nil, bottom: view.safeAreaLayoutGuide.bottomAnchor, left: nil, right: nil, paddingTop: 0, paddingBottom: 20, paddingLeft: 0, paddingRight: 0, width: 80, height: 80)
         capturePhotoButton.anchorXYCenter(centerX: view.centerXAnchor, centerY: nil)
         
-        dismissButton.anchor(top: view.topAnchor, bottom: nil, left: nil, right: view.rightAnchor, paddingTop: 12, paddingBottom: 0, paddingLeft: 0, paddingRight: 12, width: 50, height: 50)
+        dismissButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, bottom: nil, left: nil, right: view.rightAnchor, paddingTop: 12, paddingBottom: 0, paddingLeft: 0, paddingRight: 12, width: 50, height: 50)
     }
 }

@@ -15,45 +15,42 @@ class CommentsController: UICollectionViewController, UICollectionViewDelegateFl
     
     var post: Post?, comments = [Comment]()
     
-    let commentTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "Enter Comment"
-        textField.font = UIFont.systemFont(ofSize: 14)
-        textField.backgroundColor = UIColor(white: 0, alpha: 0.03)
-        textField.borderStyle = .roundedRect
-        return textField
+    lazy var containerView: CommentInputAccessoryView = {
+        let frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 50)
+        let commentInputAccessoryView = CommentInputAccessoryView(frame: frame)
+        
+        commentInputAccessoryView.separatorLines()
+        commentInputAccessoryView.delegate = self
+        
+        return commentInputAccessoryView
     }()
     
-    lazy var containerView: UIView = {
-        let containerView = UIView()
-        containerView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 50)
-        containerView.backgroundColor = .white
-        
-        let submitButton = UIButton(type: .system)
-        submitButton.setTitle("Submit", for: .normal)
-        submitButton.setTitleColor(.black, for: .normal)
-        submitButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
-        submitButton.addTarget(self, action: #selector(handleSubmit), for: .touchUpInside)
-        
-        [submitButton, commentTextField].forEach({containerView.addSubview($0)})
-        submitButton.anchor(top: containerView.topAnchor, bottom: containerView.bottomAnchor, left: nil, right: containerView.rightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 8, width: 50, height: 0)
-        commentTextField.anchor(top: containerView.topAnchor, bottom: containerView.bottomAnchor, left: containerView.leftAnchor, right: submitButton.leftAnchor, paddingTop: 8, paddingBottom: 8, paddingLeft: 12, paddingRight: 8, width: 0, height: 0)
-        
-        containerView.separatorLines()
-        
-        return containerView
-    }()
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardDidShow), name: .UIKeyboardDidShow, object: nil)
+        
+        setupCollectionView()
+        setupNavBar()
+        fetchComments()
+    }
+    
+    fileprivate func setupCollectionView() {
         collectionView?.backgroundColor = .white
         collectionView?.register(CommentsCell.self, forCellWithReuseIdentifier: cellId)
         collectionView?.alwaysBounceVertical = true
         collectionView?.keyboardDismissMode = .interactive
         
-        setupNavBar()
-        fetchComments()
+    }
+    
+    @objc func handleKeyboardDidShow() {
+        if comments.count > 0 {
+            collectionView?.scrollToItem(at: IndexPath(item: comments.count - 1, section: 0), at: UICollectionViewScrollPosition.bottom, animated: true)
+        }
     }
     
     fileprivate func fetchComments() {
@@ -121,22 +118,6 @@ class CommentsController: UICollectionViewController, UICollectionViewDelegateFl
         navigationController?.navigationBar.tintColor = .black
     }
     
-    @objc fileprivate func handleSubmit() {
-        
-        let uid = Auth.fetchCurrentUserUID()
-        let postId = self.post?.id ?? ""
-        let values = ["uid": uid, "text": commentTextField.text ?? "", "creationDate": Date().timeIntervalSince1970] as [String : Any]
-        Database.database().reference().child("comments").child(postId).childByAutoId().updateChildValues(values) { (err, ref) in
-            if let error = err {
-                print("Failed to save comment to DB:", error)
-            }
-            
-            print("Successfully saved comment to DB.")
-            self.commentTextField.text = ""
-            self.commentTextField.resignFirstResponder()
-        }
-    }
-    
     override var inputAccessoryView: UIView? {
         get {
             return containerView
@@ -146,4 +127,22 @@ class CommentsController: UICollectionViewController, UICollectionViewDelegateFl
     override var canBecomeFirstResponder: Bool {
         return true
     }
+}
+
+extension CommentsController: CommentInputAccessoryViewDelegate {
+    func didSubmit(for comment: String) {
+        let uid = Auth.fetchCurrentUserUID()
+        let postId = self.post?.id ?? ""
+        let values = ["uid": uid, "text": comment, "creationDate": Date().timeIntervalSince1970] as [String : Any]
+        Database.database().reference().child("comments").child(postId).childByAutoId().updateChildValues(values) { (err, ref) in
+            if let error = err {
+                print("Failed to save comment to DB:", error)
+                return
+            }
+            
+//            print("Successfully saved comment to DB.")
+            self.containerView.clearCommentTextField()
+        }
+    }
+    
 }
