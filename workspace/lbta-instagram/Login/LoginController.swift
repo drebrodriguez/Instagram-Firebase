@@ -12,13 +12,19 @@ import Firebase
 class LoginController: UIViewController {
     
     let logoContainerView: UIView = {
-        let view = UIView()
+        let vw = UIView()
         let logoImageView = UIImageView(image: #imageLiteral(resourceName: "Instagram_logo_white"))
         logoImageView.contentMode = .scaleAspectFill
-        view.backgroundColor = UIColor.rgb(17, 154, 237)
-        view.addSubview(logoImageView)
-        logoImageView.anchorXYCenter(centerX: view.centerXAnchor, centerY: view.centerYAnchor, width: 200, height: 50)
-        return view
+        vw.backgroundColor = UIColor.rgb(17, 154, 237)
+        vw.addSubview(logoImageView)
+        logoImageView.anchorXYCenter(centerX: vw.centerXAnchor, centerY: vw.centerYAnchor, width: 200, height: 50)
+        return vw
+    }()
+    
+    let topFillerLogoContainerView: UIView = {
+        let vw = UIView()
+        vw.backgroundColor = UIColor.rgb(17, 154, 237)
+        return vw
     }()
     
     let emailTextField: UITextField = {
@@ -79,11 +85,13 @@ class LoginController: UIViewController {
         
         navigationController?.isNavigationBarHidden = true
         
-        [logoContainerView, signUpButton].forEach{view.addSubview($0)}
+        [topFillerLogoContainerView, logoContainerView, signUpButton].forEach{view.addSubview($0)}
         
-        logoContainerView.anchor(top: view.topAnchor, bottom: nil, left: view.leftAnchor, right: view.rightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, width: 0, height: 150)
+        topFillerLogoContainerView.anchor(top: view.topAnchor, bottom: logoContainerView.topAnchor, left: view.leftAnchor, right: view.rightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0)
         
-        signUpButton.anchor(top: nil, bottom: view.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, width: 0, height: 50)
+        logoContainerView.anchor(top: view.safeAreaLayoutGuide.topAnchor, bottom: nil, left: view.leftAnchor, right: view.rightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, width: 0, height: 150)
+        
+        signUpButton.anchor(top: nil, bottom: view.safeAreaLayoutGuide.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, width: 0, height: 50)
         
         setupInputFields()
     }

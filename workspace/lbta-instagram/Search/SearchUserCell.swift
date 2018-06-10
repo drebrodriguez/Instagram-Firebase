@@ -29,6 +29,7 @@ class SearchUserCell: UICollectionViewCell {
         let lbl = UILabel()
         lbl.text = "Username"
         lbl.font = UIFont.boldSystemFont(ofSize: 14)
+        lbl.separatorLineBottom()
         return lbl
     }()
     
@@ -41,8 +42,6 @@ class SearchUserCell: UICollectionViewCell {
         photoImageView.anchorXYCenter(centerX: nil, centerY: centerYAnchor)
         
         usernameLabel.anchor(top: topAnchor, bottom: bottomAnchor, left: photoImageView.rightAnchor, right: rightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 8, paddingRight: 0, width: 0, height: 0)
-        
-        usernameLabel.separatorLineBottom()
     }
     
     fileprivate func setupProfileImageAndUsername() {
