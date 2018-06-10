@@ -44,6 +44,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
             let value = posts.last?.creationDate.timeIntervalSince1970
             query = query.queryEnding(atValue: value)
         }
+        
         query.queryLimited(toLast: UInt(queryLimit)).observe(.value, with: { (snapshot) in
 
             guard var allObjects = snapshot.children.allObjects as? [DataSnapshot] else { return }
@@ -171,6 +172,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return posts.count
     }
+    
     var currentIndexPathItem = Int()
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
@@ -216,7 +218,6 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     }
     
     var footerView = UserProfileFooter()
-    
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         
         if kind == UICollectionElementKindSectionHeader {
